@@ -5,7 +5,7 @@
 Thank you for visiting this repository! Bellow you can find some information about this project:
 
 * [What is this the purpose of this project?](#what-is-the-purpose-of-this-project)
-* [Project summary](project-summary)
+* [Project summary](#project-summary)
 * [How can you be involved?](#how-can-you-be-involved)
 
 
