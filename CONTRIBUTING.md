@@ -1,4 +1,4 @@
-# Contributing to "Algorithms in Neuroscience"
+# Contributing to "Open Resources for Algorithmic Decision-Making in Neuroscience"
 
 Many thanks for your interest in this project! :relaxed: :tada: :brain:
 
