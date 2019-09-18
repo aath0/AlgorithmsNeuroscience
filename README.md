@@ -7,7 +7,7 @@ Thank you for visiting this repository! Bellow you can find some information abo
 * [What is this the purpose of this project?](#what-is-the-purpose-of-this-project)
 * [Project summary](#project-summary)
 * [How can you be involved?](#how-can-you-be-involved)
-
+* [Who are we?](#who-are-we)
 
 ## What is the purpose of this project?
  
@@ -23,6 +23,13 @@ In interdisciplinary fields such as neuroscience, there is often a gap in expert
 
 The main goal of this proposal is to raise awareness about the use of algorithmic decision-making in the field of neuroscience by building an open resource. This will consist of material and tutorials on the appropriate use of ML and signal-processing techniques for analysing neuroscientific data. The resource will comprise of a mixture of theory and hands-on exercises, aiming at making computational techniques accessible to all academic and citizen scientists.
  
+## Who are we?
+
+Behind this project there is an interdisciplinary team of people working in neuroscience, electrical engineering and computer engineering. Some of the main contributors are:
+* [Athina Tzovara](https://ccneuro.github.io/): I am a neuroscientist, working at the University of Bern. In my research I am using computational and electrophysiological techniques to study human cognition.
+* [Elpiniki]():
+* [Pinar]():
+* [Samuel Gerster]():
 
 ## How can you be involved?
 We welcome new contributions and ideas! [Here](https://github.com/aath0/AlgorithmsNeuroscience/issues/1) you can find the roadmap of this project and [here](https://github.com/aath0/AlgorithmsNeuroscience/issues) the issues we're currently working on.
