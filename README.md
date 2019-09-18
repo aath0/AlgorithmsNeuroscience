@@ -1,6 +1,6 @@
 # Open Resources for Algorithmic Decision-Making in Neuroscience
 
-### Welcome! :confetti_ball:
+### Welcome! :confetti_ball: 👩🏼‍🔬 🧠 
 
 Thank you for visiting this repository! Bellow you can find some information about this project:
 
