@@ -26,7 +26,7 @@ The main goal of this proposal is to raise awareness about the use of algorithmi
 ## Who are we?
 
 Behind this project there is an interdisciplinary team of people working in neuroscience, electrical engineering and computer engineering. Some of the main contributors are:
-* [Athina Tzovara](https://ccneuro.github.io/): I am a neuroscientist, working at the University of Bern. In my research I am using computational and electrophysiological techniques to study human cognition.
+* [Athina Tzovara](https://ccneuro.github.io/): I am a neuroscientist, working at the University of Bern. In my research I am using computational and electrophysiological techniques to study human cognition, while advocating open science and open education.
 * [Elpiniki]():
 * [Pinar]():
 * [Samuel Gerster]():
