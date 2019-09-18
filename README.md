@@ -6,8 +6,8 @@ Thank you for visiting this repository! Bellow you can find some information abo
 
 * [What is this the purpose of this project?](#what-is-the-purpose-of-this-project)
 * [Project summary](#project-summary)
-* [How can you be involved?](#how-can-you-be-involved)
 * [Who are we?](#who-are-we)
+* [How can you be involved?](#how-can-you-be-involved)
 
 ## What is the purpose of this project?
  
@@ -33,3 +33,5 @@ Behind this project there is an interdisciplinary team of people working in neur
 
 ## How can you be involved?
 We welcome new contributions and ideas! [Here](https://github.com/aath0/AlgorithmsNeuroscience/issues/1) you can find the roadmap of this project and [here](https://github.com/aath0/AlgorithmsNeuroscience/issues) the issues we're currently working on.
+
+You're very welcome to join our [slack channel](https://ccneurogroup.slack.com) for any questions or new ideas!
