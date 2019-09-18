@@ -1,6 +1,6 @@
 # Contributing to "Open Resources for Algorithmic Decision-Making in Neuroscience"
 
-Many thanks for your interest in this project! 👩🏼‍🔬 🧠 :tada:
+Thank you for your interest in this project! 👩🏼‍🔬 🧠 :tada:
 
 We aim to raise awareness about algorithmic decision-making in the field of neuroscience. We welcome new contributors and will be delighted to have your input! Bellow is a list of guidelines for helping in this project.
 Please keep in mind that these are just guidelines, not rules! We particularly welcome new ideas or different perspectives! 
