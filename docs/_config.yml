@@ -16,9 +16,9 @@
 
 #######################################################################################
 # Jekyll site settings
-title: YOUR BOOK NAME
-author: YOUR AUTHOR NAME
-email: YOUR EMAIL
+title: Tutorials for EEG Analysis
+author: Athina Tzovara, Elpiniki (Surname), Pinar Goktepe, Samuel Gerster
+email: athina.tz@gmail.com, pinargoktepe@gmail.com
 description: >-
   This is an example book built with Jupyter Books.
 
