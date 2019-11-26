@@ -29,14 +29,15 @@
 # Adds a searchbar link
 - title: Search
   search: true
+  not_numbered: false
 
 # Divider for meta-pages and content page
 - divider: true
 
 - title: Preprocessing
-- not_numbered: false
-- expand_sections: true
-- sections:
+  not_numbered: false
+  expand_sections: true
+  sections:
   - title: Data Loading
     url: /Tutorial_files/DataLoading
     not_numbered: true
@@ -48,9 +49,9 @@
     not_numbered: true
 
 - title: Machine Learning 
-- not_numbered: false
-- expand_sections: true
-- sections:
+  not_numbered: false
+  expand_sections: true
+  sections:
   - title: Constructing Dataset
     url: /Tutorial_files/DatasetConstruction
     not_numbered: true
