@@ -21,10 +21,6 @@
 #
 # See the links below for an example.
 
-# Adds a searchbar link
-#- title: Search
-#  search: true
-#  not_numbered: true
 
 # Top-level page
 - title: Introduction
