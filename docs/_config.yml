@@ -17,8 +17,8 @@
 #######################################################################################
 # Jekyll site settings
 title: Tutorials for EEG Analysis
-author: Athina Tzovara
-email: athina.tz@gmail.com
+author: Athina Tzovara, Elpiniki (Surname), Pinar Goktepe, Samuel Gerster
+email: athina.tz@gmail.com, pinargoktepe@gmail.com
 description: >-
   This is an example book built with Jupyter Books.
 

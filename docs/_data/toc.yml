@@ -21,20 +21,21 @@
 #
 # See the links below for an example.
 
+# Adds a searchbar link
+#- title: Search
+#  search: true
+#  not_numbered: true
+
 # Top-level page
 - title: Introduction
   url: /Tutorial_files/intro
-  not_numbered: true
-
-# Adds a searchbar link
-- title: Search
-  search: true
   not_numbered: true
 
 # Divider for meta-pages and content page
 - divider: true
 
 - title: Preprocessing
+  url: /Tutorial_files/preprocess
   not_numbered: true
   expand_sections: true
   sections:
@@ -49,6 +50,7 @@
     not_numbered: true
 
 - title: Machine Learning 
+  url: /Tutorial_files/ml
   not_numbered: true
   expand_sections: true
   sections:
