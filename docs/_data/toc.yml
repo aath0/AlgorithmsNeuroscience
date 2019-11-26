@@ -33,26 +33,33 @@
 # Divider for meta-pages and content page
 - divider: true
 
-- title: Data Loading
-  url: /Tutorial_files/DataLoading
-  not_numbered: true
-- title: Data Visualization
-  url:  /Tutorial_files/DataVisualization
-  not_numbered: true
-- title: Rereferencing
-  url: /Tutorial_files/ReferencingforEEGdata
-  not_numbered: true
+- title: Preprocessing
+- not_numbered: false
+- expand_sections: true
+- sections:
+  - title: Data Loading
+    url: /Tutorial_files/DataLoading
+    not_numbered: true
+  - title: Data Visualization
+    url:  /Tutorial_files/DataVisualization
+    not_numbered: true
+  - title: Rereferencing
+    url: /Tutorial_files/ReferencingforEEGdata
+    not_numbered: true
 
-
-- title: Constructing Dataset
-  url: /Tutorial_files/DatasetConstruction
-  not_numbered: true
-- title: Participant Level Analysis
-  url: /Tutorial_files/ApplyingMachineLearningMethods_1
-  not_numbered: true
-- title: Group Level Analysis
-  url: /Tutorial_files/ApplyingMachineLearningMethods_2
-  not_numbered: true
-- title: Analysis on Temporal Dimension
-  url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions
-  not_numbered: true
+- title: Machine Learning 
+- not_numbered: false
+- expand_sections: true
+- sections:
+  - title: Constructing Dataset
+    url: /Tutorial_files/DatasetConstruction
+    not_numbered: true
+  - title: Participant Level Analysis
+    url: /Tutorial_files/ApplyingMachineLearningMethods_1
+    not_numbered: true
+  - title: Group Level Analysis
+    url: /Tutorial_files/ApplyingMachineLearningMethods_2
+    not_numbered: true
+  - title: Analysis on Temporal Dimension
+    url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions
+    not_numbered: true
