@@ -1,0 +1,1680 @@
+---
+redirect_from:
+  - "/tutorial-files/applyingmachinelearningmethods-2"
+interact_link: content/Tutorial_files/ApplyingMachineLearningMethods_2.ipynb
+kernel_name: python3
+has_widgets: false
+title: |-
+  Group Level Analysis
+prev_page:
+  url: /Tutorial_files/ApplyingMachineLearningMethods_1.html
+  title: |-
+    Participant Level Analysis
+next_page:
+  url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions.html
+  title: |-
+    Analysis on Temporal Dimension
+suffix: .ipynb
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tutorial-#5:-Applying-Machine-Learning-Methods-to-EEG-Data-on-Group-Level">Tutorial #5: Applying Machine Learning Methods to EEG Data on Group Level<a class="anchor-link" href="#Tutorial-#5:-Applying-Machine-Learning-Methods-to-EEG-Data-on-Group-Level"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this tutorial, same classification tasks in Tutorial-4 will be examined but this time analysis will be done on group level.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>The the previous tutorial data of the only one participant in 'Emotion-Antecedent Appraisal Checks: EEG and EMG data sets for Novelty and Pleasantness' is used. In this tutorial, all participans will be included</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">from</span> <span class="nn">mne.decoding</span> <span class="k">import</span> <span class="n">Vectorizer</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span><span class="p">,</span> <span class="n">cross_val_predict</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">precision_recall_fscore_support</span><span class="p">,</span> <span class="n">accuracy_score</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+
+<span class="c1"># Models</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="k">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load Dataset</span>
+<span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;../../study1/study1_eeg/epochdata/&#39;</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_folder</span><span class="o">+</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="s1">&#39;.DS_Store&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+
+<span class="n">numberOfEpochs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="c1"># Read the EEG epochs:</span>
+<span class="n">epochs_all_UN</span><span class="p">,</span> <span class="n">epochs_all_UP</span><span class="p">,</span> <span class="n">epochs_all_NP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">epochs_UN</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span>
+    <span class="n">epochs_UP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
+    <span class="n">epochs_NP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FN&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
+    <span class="n">numberOfEpochs</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs_UN</span><span class="o">.</span><span class="n">events</span><span class="p">))</span>
+    <span class="n">numberOfEpochs</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs_UP</span><span class="o">.</span><span class="n">events</span><span class="p">))</span>
+    <span class="n">numberOfEpochs</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs_NP</span><span class="o">.</span><span class="n">events</span><span class="p">))</span>
+    <span class="n">UN</span><span class="p">,</span> <span class="n">UP</span><span class="p">,</span> <span class="n">NP</span> <span class="o">=</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">f</span><span class="p">]],</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">f</span><span class="p">]],</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">f</span><span class="p">]]</span>
+    <span class="n">UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epochs_UN</span><span class="p">)</span>
+    <span class="n">UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epochs_UP</span><span class="p">)</span>
+    <span class="n">NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epochs_NP</span><span class="p">)</span>
+    <span class="n">epochs_all_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UN</span><span class="p">)</span>
+    <span class="n">epochs_all_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UP</span><span class="p">)</span>
+    <span class="n">epochs_all_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NP</span><span class="p">)</span>
+
+<span class="c1">#print(numberOfEpochs)</span>
+<span class="n">epochs_all_UN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="p">)</span>
+<span class="n">epochs_all_UP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">epochs_all_UP</span><span class="p">)</span>
+<span class="n">epochs_all_NP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">epochs_all_NP</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;../../study1/study1_eeg/epochdata/P-15.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-01.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-14.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-02.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-16.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-17.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-03.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-07.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-13.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-12.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-06.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-10.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-04.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-05.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-11.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-20.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-08.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-09.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-21.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-23.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-22.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-26.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-27.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-24.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-18.fif&#39;]
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-15.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-01.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-14.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-02.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-16.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-17.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-03.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-07.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-13.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-12.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-06.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-10.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-04.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-05.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-11.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-20.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-08.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-09.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-21.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-23.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-22.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-26.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-27.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-24.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-18.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
+  epochs = mne.read_epochs(files[f], verbose=False)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_UN: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_UP</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_NP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_NP</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Shape of epochs_UN: (25, 2)
+Shape of epochs_UP: (25, 2)
+Shape of epochs_NP: (25, 2)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Separating data, labels and the ids of the participants for modelling</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getData_labels</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">epochs</span><span class="p">:</span>
+        <span class="n">tmp_epoch</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">tmp_labels</span> <span class="o">=</span> <span class="n">tmp_epoch</span><span class="o">.</span><span class="n">events</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">)</span>
+        <span class="n">tmp_id</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ids</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">tmp_id</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp_epoch</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+        
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ids</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events">Example #1:  Classification between Unpleasant and Pleasant Events<a class="anchor-link" href="#Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">ids_UP</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_UP</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Standard score calculation is done by simply calculating accuracy regardless of the participant. The following function calculates and returns accuracy per participant.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="n">unique_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+    <span class="n">unique_ids</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">unique_ids</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">id</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">predictions</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">unique_ids</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Create all models and then run cross validation for all of them for comparing their performances.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
+<span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+<span class="c1">#Logistic Regression</span>
+<span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">kfold</span><span class="p">):</span>
+    <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
+            <span class="n">cv_accuracy_perparticipant</span><span class="p">,</span> <span class="n">unique_ids</span> <span class="o">=</span> <span class="n">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="n">results_perParticipant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy_perparticipant</span><span class="p">)</span>
+            <span class="n">cv_accuracy</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV accuracy of model &#39;</span> <span class="o">+</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV accuracy of model &#39;</span> <span class="o">+</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; per participant: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_accuracy_perparticipant</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Data has infinite or NaN value!&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UP</span><span class="p">,</span> <span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>LR
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CV accuracy of model LR: [0.52369338 0.50627178 0.51498258]
+CV accuracy of model LR per participant: [0.52734375, 0.5206611570247934, 0.5188284518828452, 0.49606299212598426, 0.5095057034220533, 0.49551569506726456, 0.5639097744360902, 0.5658263305322129, 0.44808743169398907, 0.5275938189845475, 0.5217391304347826, 0.4520547945205479, 0.4618834080717489, 0.5054945054945055, 0.5745192307692307, 0.4814004376367615, 0.5213414634146342, 0.47586206896551725, 0.49814126394052044, 0.5318559556786704, 0.48091603053435117, 0.4801762114537445, 0.5483193277310925, 0.5495283018867925, 0.5329815303430079]
+LDA
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/base.py:291: RuntimeWarning: invalid value encountered in greater
+  indices = (scores &gt; 0).astype(np.int)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
+  sqr = np.multiply(arr, arr, out=arr)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CV accuracy of model LDA: [0.51428571 0.50627178 0.50766551]
+CV accuracy of model LDA per participant: [0.5390625, 0.5495867768595041, 0.4811715481171548, 0.4921259842519685, 0.5095057034220533, 0.4730941704035874, 0.5375939849624061, 0.5210084033613446, 0.4207650273224044, 0.5474613686534217, 0.4806763285024155, 0.5, 0.5605381165919282, 0.47802197802197804, 0.5240384615384616, 0.49452954048140046, 0.4969512195121951, 0.4586206896551724, 0.5092936802973977, 0.5318559556786704, 0.5114503816793893, 0.5110132158590308, 0.5189075630252101, 0.5, 0.5408970976253298]
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/base.py:291: RuntimeWarning: invalid value encountered in greater
+  indices = (scores &gt; 0).astype(np.int)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mean_CVaccuracies</span><span class="p">,</span> <span class="n">std_CVaccuracies</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Claculate mean and standard deviation of cross validation scores for each model</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+<span class="n">mean_CVaccuracies_UP</span><span class="p">,</span> <span class="n">std_CVaccuracies_UP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+    <span class="n">mean_CVaccuracies_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">std_CVaccuracies_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_CVaccuracies_UP</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Std cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_CVaccuracies_UP</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_UP</span><span class="p">)</span>
+<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_UP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean cv accuracies: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Std cv accuracies: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Results UP: [array([0.52369338, 0.50627178, 0.51498258]), array([0.51428571, 0.50627178, 0.50766551])]
+Mean cv accuracies UP: [0.5149825783972125, 0.5094076655052264]
+Std cv accuracies UP: [0.008710801393728207, 0.0042816047830816755]
+
+
+Mean cv accuracies: [[0.5149825783972125, 0.5094076655052264]]
+Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>!!!! Not sure if the following plot makes sense!!!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following function plots lda and logistic regression scores for each partipant</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="k">def</span> <span class="nf">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+    
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;CV Accuracy Scores per Participant&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;LR&#39;</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;ro&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;bo&#39;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Participant IDs&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_23_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Box plots shows how given data is distributed around the mean of the data and also it highlights the outliers.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="k">def</span> <span class="nf">plotModelComparison</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Model Comparison&#39;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">model_names</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_26_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Independent t-test is applied to statistically show whether there is a significant difference between performace of two models. Small p-value means that performace of models are significantly different, large p-value indicates that models are performing similar. In general, as the threshold for determining whether two distributions are different or not p = 0.05 is preffered.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyTTest</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not enough values for t-test!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+                <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">results</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p = </span><span class="si">{0}</span><span class="s2"> for t-test between </span><span class="si">{1}</span><span class="s2"> and </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 0.37612545243913403 for t-test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since p-value is larger than 0.05, we can conclude that there is no significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and pleasant events.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#2:--Classification-between-Unpleasant-and-Neutral-Events">Example #2:  Classification between Unpleasant and Neutral Events<a class="anchor-link" href="#Example-#2:--Classification-between-Unpleasant-and-Neutral-Events"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Dataset with unpleasant and neutral events</span>
+<span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">ids_UN</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>float64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
+<span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+<span class="c1">#Logistic Regression</span>
+<span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">results_UN</span><span class="p">,</span> <span class="n">results_perParticipant_UN</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UN</span><span class="p">,</span> <span class="n">data_UN_new</span><span class="p">,</span> <span class="n">labels_UN_new</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>    
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>LR
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CV accuracy of model LR: [0.28741259 0.29356193 0.2940147 ]
+CV accuracy of model LR per participant: [0.27710843373493976, 0.25840336134453784, 0.17647058823529413, 0.39194139194139194, 0.33976833976833976, 0.29555555555555557, 0.34657039711191334, 0.31092436974789917, 0.2552083333333333, 0.20408163265306123, 0.2634146341463415, 0.34172661870503596, 0.22707423580786026, 0.3140495867768595, 0.0997624703087886, 0.48394495412844035, 0.40752351097178685, 0.3546099290780142, 0.2743682310469314, 0.2528409090909091, 0.10150375939849623, 0.3303370786516854, 0.386411889596603, 0.32, 0.2159383033419023]
+LDA
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">results_UN</span><span class="p">)</span>
+<span class="n">mean_CVaccuracies_UN</span><span class="p">,</span> <span class="n">std_CVaccuracies_UN</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results_UN</span><span class="p">)):</span>
+    <span class="n">mean_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results_UN</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">std_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results_UN</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_UN</span><span class="p">)</span>
+<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_UN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[array([0.30161943, 0.2854251 , 0.30267423]), array([0.27935223, 0.25546559, 0.25405186])]
+[[0.5149825783972125, 0.5094076655052264], [0.2965729215196075, 0.26295655920751887]]
+[[0.008710801393728207, 0.0042816047830816755], [0.009668690310227143, 0.014216648276344255]]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_36_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 0.027617003699447643 for t-test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and neutral events.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#3:-Classification-between-Pleasant-and-Neutral-Events">Example #3: Classification between Pleasant and Neutral Events<a class="anchor-link" href="#Example-#3:-Classification-between-Pleasant-and-Neutral-Events"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Dataset with unpleasant and neutral events</span>
+<span class="n">data_NP</span><span class="p">,</span> <span class="n">labels_NP</span><span class="p">,</span> <span class="n">ids_NP</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_NP</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>float64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
+<span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+<span class="c1">#Logistic Regression</span>
+<span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">results_NP</span><span class="p">,</span> <span class="n">results_perParticipant_NP</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_NP</span><span class="p">,</span> <span class="n">data_NP</span><span class="p">,</span> <span class="n">labels_NP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>float64
+LR
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
+  &#34;this warning.&#34;, FutureWarning)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CV accuracy of model LR: [0.3997599  0.36389111 0.41129355]
+CV accuracy of model LR per participant: [0.5145228215767634, 0.44106463878326996, 0.18, 0.35494880546075086, 0.36666666666666664, 0.43526785714285715, 0.23902439024390243, 0.3669064748201439, 0.41952506596306066, 0.28354430379746837, 0.4492099322799097, 0.4707692307692308, 0.4270833333333333, 0.3678571428571429, 0.4555256064690027, 0.2932330827067669, 0.5140997830802603, 0.4802494802494803, 0.43387470997679817, 0.27692307692307694]
+LDA
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CV accuracy of model LDA: [0.35534214 0.31905524 0.34321185]
+CV accuracy of model LDA per participant: [0.42946058091286304, 0.4144486692015209, 0.14222222222222222, 0.3447098976109215, 0.24166666666666667, 0.39285714285714285, 0.3170731707317073, 0.34532374100719426, 0.36939313984168864, 0.21012658227848102, 0.41309255079006774, 0.4, 0.3645833333333333, 0.3535714285714286, 0.3665768194070081, 0.2894736842105263, 0.3600867678958785, 0.4490644490644491, 0.4037122969837587, 0.16153846153846155]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">results_NP</span><span class="p">)</span>
+<span class="n">mean_CVaccuracies_NP</span><span class="p">,</span> <span class="n">std_CVaccuracies_NP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results_NP</span><span class="p">)):</span>
+    <span class="n">mean_CVaccuracies_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results_NP</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">std_CVaccuracies_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results_NP</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_NP</span><span class="p">)</span>
+<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_NP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[array([0.3997599 , 0.36389111, 0.41129355]), array([0.35534214, 0.31905524, 0.34321185])]
+[[0.5149825783972125, 0.5094076655052264], [0.2965729215196075, 0.26295655920751887], [0.3916481897048707, 0.3392030784250561]]
+[[0.008710801393728207, 0.0042816047830816755], [0.009668690310227143, 0.014216648276344255], [0.024720391294445924, 0.018472611003307753]]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_44_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 0.04223974717546009 for t-test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since p-value is larger than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between neutral and pleasant events.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Comparing-Performance-of-Models-Over-Different-Tasks">Comparing Performance of Models Over Different Tasks<a class="anchor-link" href="#Comparing-Performance-of-Models-Over-Different-Tasks"> </a></h4>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">evalMetric</span><span class="p">,</span> <span class="n">metricName</span><span class="p">):</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># the width of the bars</span>
+
+    <span class="c1"># Set position of bar on X axis</span>
+    <span class="n">rects1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evalMetric</span><span class="p">))</span>
+    <span class="n">rects2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rects1</span><span class="p">]</span>
+    <span class="n">rects3</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rects2</span><span class="p">]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects1</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">evalMetric</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#87CEFA&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects2</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">evalMetric</span><span class="p">))[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#FFE4E1&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Classification Tasks&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([</span><span class="n">r</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evalMetric</span><span class="p">))],</span> <span class="n">tasks</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">metricName</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Plot Mean Accuracies</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UN&#39;</span><span class="p">,</span> <span class="s1">&#39;UP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LDA&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">]</span>
+<span class="n">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mean_CVaccuracies</span><span class="p">,</span> <span class="s1">&#39;Mean CV Accuracy&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_49_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Plot Std of Accuracies</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UN&#39;</span><span class="p">,</span> <span class="s1">&#39;UP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LDA&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">]</span>
+<span class="n">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">std_CVaccuracies</span><span class="p">,</span> <span class="s1">&#39;Std of CV Accuracies &#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_50_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As part of group level analysis of eeg data, logistic regression (lr) and linear discriminant analysis (lda) are created as in the previous tutorial but this time svm is omitted because it requires hours to build with the amount of data we have.</p>
+<p>The first plot above showed the mean cross validation for both LDA and Logistic Regression on each task. While classifying between Unpleasant and Neutral events, both model provided accuracy around 50% which is the highest score among all tasks. For other two classification tasks, Lda performed better. It can be concluded that classification between Unpleasant and Pleasant events is the most difficult task for the models since both of them provided poor performance.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
