@@ -1,0 +1,594 @@
+---
+redirect_from:
+  - "/tutorial-files/referencingforeegdata"
+interact_link: content/Tutorial_files/ReferencingforEEGdata.ipynb
+kernel_name: python3
+has_widgets: false
+title: |-
+  Rereferencing
+prev_page:
+  url: /Tutorial_files/DataVisualization.html
+  title: |-
+    Data Visualization
+next_page:
+  url: /Tutorial_files/DatasetConstruction.html
+  title: |-
+    Constructing Dataset
+suffix: .ipynb
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tutorial-#3:-Referencing-EEG-Data">Tutorial #3: Referencing EEG Data<a class="anchor-link" href="#Tutorial-#3:-Referencing-EEG-Data"> </a></h2><p>This tutorial is about effects of reference selection on EEG data.</p>
+<h5 id="Referencing:">Referencing:<a class="anchor-link" href="#Referencing:"> </a></h5><p>EEG recordings are collected by measuring the voltage differences between a part of the brain and the reference point. After collecting the data, the reference can be changed and this process is called re-referencing. If the reference changes, the amplitude of the signal at the channels will differ too. Therefore referencing is very critical for EEG data. Re-referencing can be formulazied as follows:</p>
+<p>new electrical potential at channel 'x' = electrical potential at channel 'x' + electrical potential at the original reference - electrical potential at the new reference</p>
+<p>(Note: 'x' corresponds to channel id)</p>
+<h5 id="Selecting-the-reference:">Selecting the reference:<a class="anchor-link" href="#Selecting-the-reference:"> </a></h5><p>Athough there is no optimal strategy for selecting the reference, there are several commonly applied approaches. 
+One way is to compute the average of potentials at all the channels and use this average potential as the reference. The new reference does not have to be an existing channel, it can be a virtual one as well. After subtracting the averaged potential from electrical potential at each channel, re-referencing would be completed. 
+Another approach would be to select the channels where electrical activity is the lowest such as ears.</p>
+<p>Apart from the commonly used approaches above, there are several statistical approaches to select the reference that perfom the best (<a href="https://doi.org/10.1016/j.jneumeth.2014.05.008">https://doi.org/10.1016/j.jneumeth.2014.05.008</a>).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">import</span> <span class="nn">mne.viz</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load epoched data</span>
+<span class="n">data_file</span> <span class="o">=</span> <span class="s1">&#39;../datasets/817_1_PDDys_ODDBALL_Clean_curated-epo&#39;</span>
+
+<span class="c1"># Read the EEG epochs:</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reading ../datasets/817_1_PDDys_ODDBALL_Clean_curated-epo.fif ...
+    Found the data of interest:
+        t =    -100.00 ...     500.00 ms
+        0 CTF compensation matrices available
+189 matching events found
+No baseline correction applied
+Not setting metadata
+0 projection items activated
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ERP plot before re-referencing</span>
+<span class="n">epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_4_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_4_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For re-referencing, a function named set_eeg_reference() is provided by MNE package. It can be called by epochs, evoked or raw objects. It takes the new reference channel or 'average' as parameter. If an existing channel name is given, it uses that channel directly as the new reference. Otherwise, it calculates the average potential and uses it as the new reference. Note that this function modifies the original object. Therefore, if you want to keep the original object without any modification, use a deep copy of the original object.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="c1"># create two copies of original epochs object for further comparison</span>
+<span class="n">original_1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">epochs</span><span class="p">)</span>
+<span class="n">original_2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">epochs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Re-reference by averaging</span>
+<span class="n">re_ref_epochs</span> <span class="o">=</span> <span class="n">original_1</span><span class="o">.</span><span class="n">set_eeg_reference</span><span class="p">(</span><span class="s1">&#39;average&#39;</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Adding average EEG reference projection.
+1 projection items deactivated
+Average reference projection was added, but has not been applied yet. Use the apply_proj method to apply it.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">re_ref_epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_8_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_8_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After re-referencing by averaging the plots do not change at all. The reason for that when data is loaded, data is already has averaged reference. The documentation of the dataset includes the information related the reference.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you want to use an existing channel as the new reference, pass channel name as parameter to set_eeg_reference function. You can find the list of channel names by calling epochs.ch_names</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Set a channel as the new reference</span>
+<span class="n">re_ref_epochs_2</span> <span class="o">=</span> <span class="n">original_2</span><span class="o">.</span><span class="n">set_eeg_reference</span><span class="p">([</span><span class="s1">&#39;TP8&#39;</span><span class="p">])</span>
+<span class="n">re_ref_epochs_2</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Applying a custom EEG reference.
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_11_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_11_2.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When channel TP8 is used as reference electrode, the wave forms changed significantly.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The below plots show ERP values for standard events and target events. The difference between two plot is the choice of reference channel.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">references</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="s1">&#39;TP8&#39;</span><span class="p">]</span>
+
+<span class="c1">#Data with original reference</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;Standard&#39;</span><span class="p">]</span>
+<span class="n">nv</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;Novel&#39;</span><span class="p">]</span>
+
+<span class="c1">#Data with TP8 as the reference channel</span>
+<span class="n">st_2</span> <span class="o">=</span> <span class="n">original_2</span><span class="p">[</span><span class="s1">&#39;Standard&#39;</span><span class="p">]</span>
+<span class="n">nv_2</span> <span class="o">=</span> <span class="n">original_2</span><span class="p">[</span><span class="s1">&#39;Novel&#39;</span><span class="p">]</span>
+<span class="n">ch</span> <span class="o">=</span> <span class="mi">18</span> <span class="c1"># channel index</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">references</span><span class="p">)):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time Instances&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volt&#39;</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">references</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;original&#39;</span><span class="p">:</span> 
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;ERP values of novel and standard conditions with original reference&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ch</span><span class="p">,:],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ch</span><span class="p">,:],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;ERP values of novel and standard conditions with TP8 channel as reference&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">st_2</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ch</span><span class="p">,:],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nv_2</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ch</span><span class="p">,:],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_14_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_14_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see the above plots, differences in the responses are decreasing significantly when the reference changes. Most of the times, the aim of eeg analysis is to identify changes among different conditions. So, a wrong reference choice may lead a situation where those differences cannot be captured. Therefore, reference selection is one of the vital steps during eeg analysis.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Effects-of-Re-referencing-on-Topography">Effects of Re-referencing on Topography<a class="anchor-link" href="#Effects-of-Re-referencing-on-Topography"> </a></h5><p>The following topographic graphs are produced by using the original epoched data.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">plot_topomap</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">ch_type</span><span class="o">=</span><span class="s1">&#39;eeg&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_17_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_17_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After re-referencing with channel TP8, the values at channels are changing as you may see the color changes. However the relative differences between channels remain the same. Therefore we can conclude that change in reference channel does not affect the topography.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">re_ref_epochs_2</span><span class="o">.</span><span class="n">average</span><span class="p">()</span><span class="o">.</span><span class="n">plot_topomap</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">ch_type</span><span class="o">=</span><span class="s1">&#39;eeg&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_19_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea output_execute_result">
+<img src="../images/Tutorial_files/ReferencingforEEGdata_19_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
