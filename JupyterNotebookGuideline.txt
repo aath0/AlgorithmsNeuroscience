@@ -1,0 +1,91 @@
+
+Step 0: Install jupyter-book by running the following command.
+	
+		pip install jupyter-book
+
+Step 1: Create a Book Template
+	
+	- Run below command 
+		
+		jupyter-book create docs 
+
+	- This command creates a new Jupyter Book with name docs. It creates a Table of Content file automatically as well.
+
+Step 2: Copy your files to mybookname/content/ folder. 
+	
+	- This way jupyter-book will be able to access your data while building.
+
+Step 3: Modify Table of Content to match with your project
+	
+	- Table of content file is under _data/ folder and its name is toc.yml. It keeps the structure of your jupyter book.
+	
+	- Make sure that each file that you want to publish exists in this file as following:
+	
+	- Example:
+		
+		# Top-level page
+		- title: Introduction
+		  	url: /Tutorial_files/Tutorials
+		  	not_numbered: true
+
+		# Adds a searchbar link
+		- title: Search
+		  search: true
+
+		# Divider for meta-pages and content page
+		- divider: true
+
+		- title: Data Loading
+		  url: /Tutorial_files/DataLoading
+		  not_numbered: true
+
+	- 'title' is given to the page as its title.
+	
+	- 'url' refers to the file path which is relative to /content/ folder. So, if you use /docs/content/Tutorial_files/DataLoading.ipynb file in Data Loading page, url variable needs to be assign as follows: url: /Tutorial_files/DataLoading . 
+	
+	- Note that file names have to be provided without file extensions. jupyter-book searches the file inside the content folder with assigned path and matches the file names. By doing this, it extracts the file extensions as well.
+	
+	- If 'not_numbered' variable set to true it doesnt show an ordered number in title.
+	
+	- You can also add sections and subsections to sections as in the following example. 
+		- title: Preprocessing
+		  not_numbered: true
+		  expand_sections: true
+		  sections:
+		  - title: Data Loading
+		    url: /Tutorial_files/DataLoading
+		    not_numbered: true
+
+	- By having a toc.yml file similar to the example above, you will get each file as a page after building and publishing.
+	
+Step 4: Build HTML of pages
+	
+	- After having content of the book in /content/ folder and book's structure in /_data/toc.yml file, you will be able to build HTML version of all pages by running following command:
+
+		jupyter-book build docs/
+
+	- Note that docs is the name of our jupyter book in the examples of this guideline
+
+	- Above command creates HTML files for every page and they are located in _build/ folder. 
+
+Step 5: Publishing the book online
+
+	- Commit and push the docs/ folder to your project repository or a new repository that is created for publishing the jupyter book. 
+
+	- After that go to the Settings of the repository and find Github Pages section. In here select source for your pages. In our example the source will be master branch /docs folder.
+
+	- Finally select theme for your webpage. If you do not choose a theme for the pages, github pages gives "404 Page not found" error. 
+
+	- After completing all the steps above, the url of your website is appear under the Github Pages section in Settings. It has the following format:
+
+		https://{githubUserName}.github.io/{projectName}.
+
+	- You can access you website via the url above. Whenever you modified you files, build the HTML files as step 4 (use --overwrite flag with given command in step 4 to be able to update existing HTML files in _build/ folder) and push them to your github repository, your website will be automatically updated.
+
+	- It is worth to note that it may take roughly 10 minutes to see the updated version on your website.  
+
+Step 6 (Optional): Change name of the book
+	- If you want to change the name of your book and add author information, you need to _config.yml file in the folder that you have files and folders for your book. In our case this file exist in /docs/ folder. 
+
+
+
