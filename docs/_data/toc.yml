@@ -41,6 +41,9 @@
   - title: Data Visualization
     url:  /Tutorial_files/DataVisualization
     not_numbered: true
+  - title: Baseline Correction
+    url: /Tutorial_files/BaselineCorrection
+    not_numbered: true
   - title: Rereferencing
     url: /Tutorial_files/ReferencingforEEGdata
     not_numbered: true
