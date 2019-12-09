@@ -76,8 +76,8 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+<span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -137,7 +137,7 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_file</span> <span class="o">=</span> <span class="s1">&#39;../../study1/study1_eeg/epochdata/P-01&#39;</span>
 
 <span class="c1"># Read the EEG epochs:</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">)</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs</span><span class="p">))</span>
 </pre></div>
 
@@ -156,25 +156,7 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
     Found the data of interest:
         t =       0.00 ...    1496.09 ms
         0 CTF compensation matrices available
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>&lt;ipython-input-180-a55ec86bce5e&gt;:4: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-01.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(data_file + &#39;.fif&#39;)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>484 matching events found
+484 matching events found
 No baseline correction applied
 Not setting metadata
 0 projection items activated
@@ -212,7 +194,7 @@ Not setting metadata
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;FU&#39;: 0, &#39;FN&#39;: 1, &#39;FP&#39;: 2, &#39;NN&#39;: 3, &#39;NP&#39;: 4, &#39;NU&#39;: 5}</pre>
+<pre>{&#39;FP&#39;: 0, &#39;FN&#39;: 1, &#39;FU&#39;: 2, &#39;NN&#39;: 3, &#39;NP&#39;: 4, &#39;NU&#39;: 5}</pre>
 </div>
 
 </div>
@@ -473,7 +455,7 @@ Accuracy of 5th fold is 0.673469387755102
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:813: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
   DeprecationWarning)
 </pre>
 </div>
@@ -541,8 +523,8 @@ Best Score: 0.7011494252873564
 <pre>SVM Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.79      0.59      0.68        37
-     Neutral       0.68      0.84      0.75        38
+  Unpleasant       0.68      0.84      0.75        38
+     Neutral       0.79      0.59      0.68        37
 
     accuracy                           0.72        75
    macro avg       0.73      0.72      0.71        75
@@ -623,24 +605,8 @@ Precision: 0.7332826747720365, Recall: 0.7183499288762447, f1-score:0.7149321266
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py:1978: FutureWarning: The default value of cv will change from 3 to 5 in version 0.22. Specify it explicitly to silence this warning.
-  warnings.warn(CV_WARNING, FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:813: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
   DeprecationWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
 </pre>
 </div>
 </div>
@@ -654,8 +620,8 @@ Best Score: 0.7471264367816092
 LR Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.74      0.62      0.68        37
-     Neutral       0.68      0.79      0.73        38
+  Unpleasant       0.68      0.79      0.73        38
+     Neutral       0.74      0.62      0.68        37
 
     accuracy                           0.71        75
    macro avg       0.71      0.71      0.70        75
@@ -712,8 +678,8 @@ Precision: 0.7118768328445748, Recall: 0.705547652916074, f1-score:0.70408895265
 <pre>LDA Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.76      0.68      0.71        37
-     Neutral       0.71      0.79      0.75        38
+  Unpleasant       0.71      0.79      0.75        38
+     Neutral       0.76      0.68      0.71        37
 
     accuracy                           0.73        75
    macro avg       0.74      0.73      0.73        75
@@ -721,16 +687,6 @@ weighted avg       0.74      0.73      0.73        75
 
 Accuracy of LDA model: 0.7333333333333333
 Precision: 0.7359307359307359, Recall: 0.732574679943101, f1-score:0.7321428571428572
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
 </pre>
 </div>
 </div>
@@ -858,7 +814,7 @@ Precision: 0.7359307359307359, Recall: 0.732574679943101, f1-score:0.73214285714
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:813: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
   DeprecationWarning)
 </pre>
 </div>
@@ -873,8 +829,8 @@ Best Score: 0.6703910614525139
 SVM Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.53      0.58      0.55        31
-    Pleasant       0.70      0.65      0.67        46
+  Unpleasant       0.70      0.65      0.67        46
+    Pleasant       0.53      0.58      0.55        31
 
     accuracy                           0.62        77
    macro avg       0.61      0.62      0.61        77
@@ -932,38 +888,14 @@ Precision: 0.6135430916552668, Recall: 0.6164095371669005, f1-score:0.6140017286
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py:1978: FutureWarning: The default value of cv will change from 3 to 5 in version 0.22. Specify it explicitly to silence this warning.
-  warnings.warn(CV_WARNING, FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;logisticregression__penalty&#39;: &#39;l1&#39;}
 Best Score: 0.6983240223463687
 LR Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.59      0.52      0.55        31
-    Pleasant       0.70      0.76      0.73        46
+  Unpleasant       0.70      0.76      0.73        46
+    Pleasant       0.59      0.52      0.55        31
 
     accuracy                           0.66        77
    macro avg       0.65      0.64      0.64        77
@@ -1020,8 +952,8 @@ Precision: 0.6462962962962963, Recall: 0.6384992987377279, f1-score:0.6404454022
 <pre>LDA Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.56      0.58      0.57        31
-     Plesant       0.71      0.70      0.70        46
+  Unpleasant       0.71      0.70      0.70        46
+     Plesant       0.56      0.58      0.57        31
 
     accuracy                           0.65        77
    macro avg       0.64      0.64      0.64        77
@@ -1029,16 +961,6 @@ weighted avg       0.65      0.65      0.65        77
 
 Accuracy of LDA model: 0.6493506493506493
 Precision: 0.6368055555555556, Recall: 0.638148667601683, f1-score:0.6373626373626373
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
 </pre>
 </div>
 </div>
@@ -1138,7 +1060,7 @@ Precision: 0.6368055555555556, Recall: 0.638148667601683, f1-score:0.63736263736
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_search.py:813: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
   DeprecationWarning)
 </pre>
 </div>
@@ -1149,19 +1071,19 @@ Precision: 0.6368055555555556, Recall: 0.638148667601683, f1-score:0.63736263736
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;svc__C&#39;: 10, &#39;svc__kernel&#39;: &#39;sigmoid&#39;}
-Best Score: 0.5911602209944752
+Best Score: 0.6022099447513812
 SVM Clasification Report:
                precision    recall  f1-score   support
 
-     Neutral       0.72      0.67      0.70        43
-    Pleasant       0.63      0.69      0.66        35
+     Neutral       0.59      0.69      0.63        35
+    Pleasant       0.70      0.60      0.65        43
 
-    accuracy                           0.68        78
-   macro avg       0.68      0.68      0.68        78
-weighted avg       0.68      0.68      0.68        78
+    accuracy                           0.64        78
+   macro avg       0.64      0.65      0.64        78
+weighted avg       0.65      0.64      0.64        78
 
-Accuracy of SVM model: 0.6794871794871795
-Precision: 0.6782894736842104, Recall: 0.6800664451827243, f1-score:0.678164713649117
+Accuracy of SVM model: 0.6410256410256411
+Precision: 0.6440342781806196, Recall: 0.6451827242524917, f1-score:0.6407894736842106
 </pre>
 </div>
 </div>
@@ -1212,38 +1134,14 @@ Precision: 0.6782894736842104, Recall: 0.6800664451827243, f1-score:0.6781647136
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py:1978: FutureWarning: The default value of cv will change from 3 to 5 in version 0.22. Specify it explicitly to silence this warning.
-  warnings.warn(CV_WARNING, FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;logisticregression__penalty&#39;: &#39;l1&#39;}
 Best Score: 0.6243093922651933
 LR Clasification Report:
                precision    recall  f1-score   support
 
-     Neutral       0.75      0.63      0.68        43
-    Pleasant       0.62      0.74      0.68        35
+     Neutral       0.62      0.74      0.68        35
+    Pleasant       0.75      0.63      0.68        43
 
     accuracy                           0.68        78
    macro avg       0.68      0.69      0.68        78

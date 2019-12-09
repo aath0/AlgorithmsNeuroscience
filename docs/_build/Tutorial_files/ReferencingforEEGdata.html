@@ -7,9 +7,9 @@ has_widgets: false
 title: |-
   Rereferencing
 prev_page:
-  url: /Tutorial_files/DataVisualization.html
+  url: /Tutorial_files/BaselineCorrection.html
   title: |-
-    Data Visualization
+    Baseline Correction
 next_page:
   url: /Tutorial_files/ml.html
   title: |-
@@ -47,8 +47,9 @@ Another approach would be to select the channels where electrical activity is th
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+<span class="c1"># ignore all future warnings</span>
+<span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -67,6 +68,7 @@ Another approach would be to select the channels where electrical activity is th
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mne</span>
 <span class="kn">import</span> <span class="nn">mne.viz</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 
     </div>
@@ -87,32 +89,10 @@ Another approach would be to select the channels where electrical activity is th
 <span class="n">data_file</span> <span class="o">=</span> <span class="s1">&#39;../datasets/817_1_PDDys_ODDBALL_Clean_curated-epo&#39;</span>
 
 <span class="c1"># Read the EEG epochs:</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">)</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Reading ../datasets/817_1_PDDys_ODDBALL_Clean_curated-epo.fif ...
-    Found the data of interest:
-        t =    -100.00 ...     500.00 ms
-        0 CTF compensation matrices available
-189 matching events found
-No baseline correction applied
-Not setting metadata
-0 projection items activated
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -213,23 +193,6 @@ Not setting metadata
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Adding average EEG reference projection.
-1 projection items deactivated
-Average reference projection was added, but has not been applied yet. Use the apply_proj method to apply it.
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -324,19 +287,10 @@ Average reference projection was added, but has not been applied yet. Use the ap
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Applying a custom EEG reference.
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 
 
 <div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ReferencingforEEGdata_11_1.png"
+<img src="../images/Tutorial_files/ReferencingforEEGdata_11_0.png"
 >
 </div>
 
@@ -348,7 +302,7 @@ Average reference projection was added, but has not been applied yet. Use the ap
 
 
 <div class="output_png output_subarea output_execute_result">
-<img src="../images/Tutorial_files/ReferencingforEEGdata_11_2.png"
+<img src="../images/Tutorial_files/ReferencingforEEGdata_11_1.png"
 >
 </div>
 

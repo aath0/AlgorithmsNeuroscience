@@ -35,7 +35,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="This-tutorial-focuses-on-loading-EEG-data-in-several-different-ways.">This tutorial focuses on loading EEG data in several different ways.<a class="anchor-link" href="#This-tutorial-focuses-on-loading-EEG-data-in-several-different-ways."> </a></h4>
+<h4 id="This-tutorial-focuses-on-loading-different-representations-of-EEG-data.">This tutorial focuses on loading different representations of EEG data.<a class="anchor-link" href="#This-tutorial-focuses-on-loading-different-representations-of-EEG-data."> </a></h4>
 </div>
 </div>
 </div>
@@ -45,7 +45,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to load EEG data, MNE package will be used throughout this tutorial. MNE is an open-source Python package for exploring, visualizing, and analyzing human neurophysiological data.</p>
+<p>To import data into python, we will use functions of the <a href="https://mne.tools/dev/index.html">MNE package</a>. MNE is an open-source Python package for exploring, visualizing, and analyzing human neurophysiological data.</p>
 
 </div>
 </div>
@@ -56,37 +56,18 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>EEG data can be kept in 3 different types: raw data, epoched data and evoked (averaged) data.</p>
+<p>EEG data can be considered in 3 different types: raw data, epoched data and evoked (averaged) data.</p>
 <ol>
-<li><p>Raw Data: Continues data is stored in raw object in MNE. A raw object has 2D array structure as channels×time.</p>
+<li><p>Raw Data: Continuous data is stored as a raw object in MNE. Data in a raw object are considered as a 2D array with dimensions of channels×time.</p>
 </li>
-<li><p>Epoched Data: Collection of time-locked trials. It is stored as events×channels×times.</p>
+<li><p>Epoched Data: This consists of time-locked trials. Data are a 3D array of events×channels×times.</p>
 </li>
-<li><p>Evoked Data: When epoched data is averaged out over trials, evoked data is produced. The output is time-locked to the event. It is stored as channels×times.</p>
+<li><p>Average Event Related Potentials: This is the result of averaging epoched data over trials. The output is time-locked to an external event, and it is stored as a 2D array of channels×times.</p>
 </li>
 </ol>
 
 </div>
 </div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -121,7 +102,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>EEGBI motor imagery dataset is available in MNE package. The dataset contains 64-channel EEG recordings from 109 subjects and 14 runs on each subject in EDF+ format. For more details please check <a href="https://www.nmr.mgh.harvard.edu/mne/stable/manual/datasets_index.html#eegbci-motor-imagery">https://www.nmr.mgh.harvard.edu/mne/stable/manual/datasets_index.html#eegbci-motor-imagery</a>.</p>
+<p>We start with a dataset that is already available in the MNE package (EEGBI motor imagery dataset). The dataset contains 64-channel EEG recordings from 109 participants and 14 runs on each participant in EDF+ format. For more details please check <a href="https://www.nmr.mgh.harvard.edu/mne/stable/manual/datasets_index.html#eegbci-motor-imagery">https://www.nmr.mgh.harvard.edu/mne/stable/manual/datasets_index.html#eegbci-motor-imagery</a>.</p>
 
 </div>
 </div>
@@ -132,8 +113,9 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to load an available dataset in MNE, subject id or a list of subject ids, a list of runs (tasks) and path to locate data should be provided as arguments to load_data() function.</p>
-<p>load_data() function returns a list of paths that the requested data files located. By using read_raw_edf() function read downloaded edf files and lastly concatenate the raw data in each edf file to have the final dataset with all the selected runs.</p>
+<p>In order to load a dataset in MNE, we need to provide a participant id or a list of participant ids, a list of runs (tasks) and path to locate data should be provided as arguments to load_data() function.</p>
+<p>The function load_data() returns a list of paths that the requested data files located.</p>
+<p>Another way to load data is by using the read_raw_edf() function. This will load downloaded edf files and concatenate the raw data in each edf file to have the final dataset with all the selected runs.</p>
 
 </div>
 </div>
@@ -173,17 +155,26 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Extracting EDF parameters from /Users/scg/Desktop/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R06.edf...
+<pre>Downloading http://www.physionet.org/physiobank/database/eegmmidb/S001/S001R06.edf (2.5 MB)
+[........................................] 100.00% (  2.5 MB,  20.4 MB/s) |   
+Do you want to set the path:
+    /data/Athina/AlgorithmsNeuroscience/datasets
+as the default EEGBCI dataset path in the mne-python config [y]/n? y
+Downloading http://www.physionet.org/physiobank/database/eegmmidb/S001/S001R10.edf (2.5 MB)
+[........................................] 100.00% (  2.5 MB,  17.1 MB/s) -   
+Downloading http://www.physionet.org/physiobank/database/eegmmidb/S001/S001R14.edf (2.5 MB)
+[........................................] 100.00% (  2.5 MB,  13.8 MB/s) /   
+Extracting EDF parameters from /data/Athina/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R06.edf...
 EDF file detected
 Setting channel info structure...
 Creating raw.info structure...
 Reading 0 ... 19999  =      0.000 ...   124.994 secs...
-Extracting EDF parameters from /Users/scg/Desktop/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R10.edf...
+Extracting EDF parameters from /data/Athina/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R10.edf...
 EDF file detected
 Setting channel info structure...
 Creating raw.info structure...
 Reading 0 ... 19999  =      0.000 ...   124.994 secs...
-Extracting EDF parameters from /Users/scg/Desktop/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R14.edf...
+Extracting EDF parameters from /data/Athina/AlgorithmsNeuroscience/datasets/MNE-eegbci-data/physiobank/database/eegmmidb/S001/S001R14.edf...
 EDF file detected
 Setting channel info structure...
 Creating raw.info structure...
@@ -202,78 +193,10 @@ Reading 0 ... 19999  =      0.000 ...   124.994 secs...
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>All data structures such as raw and epochs in mne have an attribute named 'info' which provides measurement related information about given data.</p>
+<p>All data structures such as raw and epochs in mne have an attribute named 'info' which provides measurement related information about a given dataset.</p>
 
 </div>
 </div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">raw_obj</span><span class="o">.</span><span class="n">info</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;Info | 16 non-empty fields
-    bads : list | 0 items
-    ch_names : list | Fc5., Fc3., Fc1., Fcz., Fc2., Fc4., Fc6., C5.., C3.., ...
-    chs : list | 64 items (EEG: 64)
-    comps : list | 0 items
-    custom_ref_applied : bool | False
-    dev_head_t : Transform | 3 items
-    events : list | 0 items
-    highpass : float | 0.0 Hz
-    hpi_meas : list | 0 items
-    hpi_results : list | 0 items
-    lowpass : float | 80.0 Hz
-    meas_date : tuple | 2009-08-12 16:15:00 GMT
-    nchan : int | 64
-    proc_history : list | 0 items
-    projs : list | 0 items
-    sfreq : float | 160.0 Hz
-    acq_pars : NoneType
-    acq_stim : NoneType
-    ctf_head_t : NoneType
-    description : NoneType
-    dev_ctf_t : NoneType
-    dig : NoneType
-    experimenter : NoneType
-    file_id : NoneType
-    gantry_angle : NoneType
-    hpi_subsystem : NoneType
-    kit_system_id : NoneType
-    line_freq : NoneType
-    meas_id : NoneType
-    proj_id : NoneType
-    proj_name : NoneType
-    subject_info : NoneType
-    xplotter_layout : NoneType
-&gt;</pre>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -281,7 +204,7 @@ Reading 0 ... 19999  =      0.000 ...   124.994 secs...
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As mentioned at the beginning of the tutorial, raw type stores the data in 2D array format as channels×samples. The data can be accessed as following:</p>
+<p>Raw data are stored in 2D array, containing channels×samples. The data can be accessed as following:</p>
 
 </div>
 </div>
@@ -332,6 +255,57 @@ Number of samples:  60000
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>The imported raw EEG signal will simply contain time-courses of EEG activity, one per electrode.</p>
+<p>For example, we can visualize the time-course EEG activity over the first electrode, during 5000 samples:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">raw_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="mi">4999</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Raw EEG, electrode 0, samples 0-4999&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/DataLoading_13_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h5 id="Converting-Raw-data-to-Epoched-data">Converting Raw data to Epoched data<a class="anchor-link" href="#Converting-Raw-data-to-Epoched-data"> </a></h5>
 </div>
 </div>
@@ -342,7 +316,11 @@ Number of samples:  60000
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For the conversion, events in the data should be extracted firstly. If the data is annotated, then the events can be extracted easily by event_from_annotations() function of MNE. It returns both events and event ids.</p>
+<p>A raw EEG file contains continuous activity of EEG signals, recorded over a period of time. Very often, we use EEG to analyze neural responses to external events of the environment. For example, we may want to study how the brain responds to a set of images, or sounds. For this reason, instead of analyzing a continuous time-course of activity, we want to focus on <em>parts</em> of the EEG signals, which correspond to the time when external events occured.</p>
+<p>Typically, during an experiment we mark the time when important events occur by integrating <em>triggers</em> into an EEG recording, which can be imported as 'Events'. 
+An 'Event' will essentially give us information of <em>when</em> in time an external stimulus was presented, and of <em>what</em> this stimulus was.</p>
+<p>Once we have this information, we can convert our raw EEG signal to Epochs. This consists of extracting chunks of EEG data around a given window, marked by the time when each external event occured.</p>
+<p>To do this conversion in python, we first need to read a file of external events. If the data is annotated, then the events can be extracted easily by event_from_annotations() function of MNE. The function will return both events and event ids.</p>
 
 </div>
 </div>
@@ -398,7 +376,11 @@ Number of samples:  60000
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To be able to define epochs, a time interval should be selected. tmin and tmax represents the beginning and the end of selected time interval (in seconds). This selection may differ, depending on the experiment. If the reponse to the given stimuli is expected to happen quickly, then a narrow time interval may be needed and vice versa. For example if an experiment is being conducted by showing pictures, then the reponses can be observed quickly. However when imagination is required during experiment, then a larger time interval may be needed to capture the whole response.</p>
+<h3 id="How-do-we-select-the-time-interval-that-we-want-to-analyze?">How do we select the time interval that we want to analyze?<a class="anchor-link" href="#How-do-we-select-the-time-interval-that-we-want-to-analyze?"> </a></h3><p>To be able to define epochs in our EEG data, a time interval of interest should be selected.</p>
+<p>tmin and tmax represent the beginning and the end of selected time interval (in seconds). This selection may differ, depending on the experiment. If the reponse to the given stimuli is expected to happen quickly, then a narrow time interval may be needed and vice versa.</p>
+<p>For example, if our goal is to study basic sensory processing, e.g. resposnes to simple visual or auditory stimuli, then we expect EEG responses to appear relatively early i.e. within a few hundrend miliseconds after the onset of the stimuli. If by contrast our goal is to study higher cognitive functions, e.g. mental imagery, or decision-making, we will very likely need to extract a longer interval in order to capture the relevant EEG responses.</p>
+<p>In the following example, we define epochs lasting for 4 seconds after the event onset.</p>
+<p>As it is typical in EEG analysis, we also define a baseline, i.e. an interval of relative 'inactivity'. Post-stimulus responses are typically contrasted with respect to this baseline.</p>
 
 </div>
 </div>
@@ -449,6 +431,7 @@ Loading data for 90 events and 961 original time points ...
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>As you observe, in the above example we annotate 'baseline = None', which simply indicates that no baseline correction is applied on the data. As our 'tmin' is -1 (negative), the extracted epochs will contain a baseline period. It is then up to us to decide whether we want to use this period for baseline correction.</p>
 <p>Accessing data of an epochs object is being done by the same ways as for raw objcets.</p>
 
 </div>
@@ -487,9 +470,9 @@ Loading data for 90 events and 961 original time points ...
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Number of events: 189
-Number of channels: 60
-Number of time instances: 301
+<pre>Number of events: 87
+Number of channels: 64
+Number of time instances: 961
 </pre>
 </div>
 </div>
@@ -504,7 +487,55 @@ Number of time instances: 301
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="1.2)-Loading-data-that-is-not-available-in-MNE">1.2) Loading data that is not available in MNE<a class="anchor-link" href="#1.2)-Loading-data-that-is-not-available-in-MNE"> </a></h3>
+<p>The epoched data are still time-courses of EEG activity, over electrodes, but now we also have an additional dimension of epochs. Here is an example of a few epochs, plotted here:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Exemplar single-trial epoched data, for electrode 0&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/DataLoading_22_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.2)-Loading-EEG-data">1.2) Loading EEG data<a class="anchor-link" href="#1.2)-Loading-EEG-data"> </a></h3>
 </div>
 </div>
 </div>
@@ -514,8 +545,8 @@ Number of time instances: 301
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If a dataset apart from MNE datasets is preferred, it can be loaded directly from given path. 
-read_epoch() function can be used for reading epoched data from file.</p>
+<p>EEG data can be loaded directly from a given path.
+If the data are already epoched, the function mne.read_epochs() can be used for reading epoched data from a '.fif' file:</p>
 
 </div>
 </div>
@@ -531,12 +562,11 @@ read_epoch() function can be used for reading epoched data from file.</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Loading Epoched data </span>
 
-<span class="c1"># The file name should end with&#39;epo&#39; to be able to load it via mne</span>
+<span class="c1"># The file name should end with&#39;-epo.fif&#39;:</span>
 <span class="n">data_file</span> <span class="o">=</span> <span class="s1">&#39;../datasets/817_1_PDDys_ODDBALL_Clean_curated-epo&#39;</span>
 
 <span class="c1"># Read the EEG epochs:</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs</span><span class="p">))</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -558,7 +588,6 @@ read_epoch() function can be used for reading epoched data from file.</p>
 No baseline correction applied
 Not setting metadata
 0 projection items activated
-189
 </pre>
 </div>
 </div>
@@ -571,77 +600,9 @@ Not setting metadata
 
 <div class="jb_cell">
 
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">epochs</span><span class="o">.</span><span class="n">info</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;Info | 19 non-empty fields
-    bads : list | 0 items
-    ch_names : list | Fp1, Fz, F3, F7, FC5, FC1, C3, T7, CP5, ...
-    chs : list | 60 items (EEG: 60)
-    comps : list | 0 items
-    custom_ref_applied : bool | False
-    dev_head_t : Transform | 3 items
-    dig : list | 60 items (60 EEG)
-    events : list | 0 items
-    file_id : dict | 4 items
-    highpass : float | 0.0 Hz
-    hpi_meas : list | 0 items
-    hpi_results : list | 0 items
-    lowpass : float | 250.0 Hz
-    meas_date : NoneType | unspecified
-    meas_id : dict | 4 items
-    nchan : int | 60
-    proc_history : list | 0 items
-    projs : list | 0 items
-    sfreq : float | 500.0 Hz
-    acq_pars : NoneType
-    acq_stim : NoneType
-    ctf_head_t : NoneType
-    description : NoneType
-    dev_ctf_t : NoneType
-    experimenter : NoneType
-    gantry_angle : NoneType
-    hpi_subsystem : NoneType
-    kit_system_id : NoneType
-    line_freq : NoneType
-    proj_id : NoneType
-    proj_name : NoneType
-    subject_info : NoneType
-    xplotter_layout : NoneType
-&gt;</pre>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Data can be accessed as in the following cell.</p>
+<p>When reading data as epochs, these will be stored in a 3D array. To access the data of this array you can use two different ways:</p>
 
 </div>
 </div>
@@ -696,7 +657,7 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>event_id attribute keeps names of all the conditions in given data and number of events in each condition</p>
+<p>The labels of experimental conditions are stored into a dictionary, accessed as:</p>
 
 </div>
 </div>
@@ -726,7 +687,7 @@ Not setting metadata
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;Standard&#39;: 201, &#39;Target&#39;: 200, &#39;Novel&#39;: 202}</pre>
+<pre>{&#39;Novel&#39;: 202, &#39;Standard&#39;: 201, &#39;Target&#39;: 200}</pre>
 </div>
 
 </div>
@@ -741,7 +702,7 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Accessing to data with a specific event condition can be done as following:</p>
+<p>To access epochs that belong to a specific experimental condition, you can simply refer to their label as following:</p>
 
 </div>
 </div>
@@ -806,7 +767,7 @@ Stop time after the event 0.5
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5 id="Get-evoked-data-from-epoched-data">Get evoked data from epoched data<a class="anchor-link" href="#Get-evoked-data-from-epoched-data"> </a></h5>
+<h5 id="Obtain-average-ERP-data-from-epoched-data">Obtain average ERP data from epoched data<a class="anchor-link" href="#Obtain-average-ERP-data-from-epoched-data"> </a></h5>
 </div>
 </div>
 </div>
@@ -816,7 +777,7 @@ Stop time after the event 0.5
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Evoked Potential is produced by averaging the epochs. If the data is type of eeg, then evoked data corresponds to ERP (Event Related Potential).</p>
+<p>Average Event-Related Potentials are produced by averaging all available epochs:</p>
 
 </div>
 </div>
@@ -831,61 +792,9 @@ Stop time after the event 0.5
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">evoked</span> <span class="o">=</span> <span class="n">epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span>
-<span class="n">evoked</span><span class="o">.</span><span class="n">info</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;Info | 19 non-empty fields
-    bads : list | 0 items
-    ch_names : list | Fp1, Fz, F3, F7, FC5, FC1, C3, T7, CP5, ...
-    chs : list | 60 items (EEG: 60)
-    comps : list | 0 items
-    custom_ref_applied : bool | False
-    dev_head_t : Transform | 3 items
-    dig : list | 60 items (60 EEG)
-    events : list | 0 items
-    file_id : dict | 4 items
-    highpass : float | 0.0 Hz
-    hpi_meas : list | 0 items
-    hpi_results : list | 0 items
-    lowpass : float | 250.0 Hz
-    meas_date : NoneType | unspecified
-    meas_id : dict | 4 items
-    nchan : int | 60
-    proc_history : list | 0 items
-    projs : list | 0 items
-    sfreq : float | 500.0 Hz
-    acq_pars : NoneType
-    acq_stim : NoneType
-    ctf_head_t : NoneType
-    description : NoneType
-    dev_ctf_t : NoneType
-    experimenter : NoneType
-    gantry_angle : NoneType
-    hpi_subsystem : NoneType
-    kit_system_id : NoneType
-    line_freq : NoneType
-    proj_id : NoneType
-    proj_name : NoneType
-    subject_info : NoneType
-    xplotter_layout : NoneType
-&gt;</pre>
-</div>
-
-</div>
-</div>
 </div>
 </div>
 
@@ -896,44 +805,10 @@ Stop time after the event 0.5
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Number of epochs that are used for averaging is kept in nave attribute of evoked object.</p>
+<p>When averaging epochs, the total number of channels and the number of time points do not change, since the averaging is done over trials. This leaves us with a 2D array, where the first dimension is channels and the second time:</p>
 
 </div>
 </div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evoked</span><span class="o">.</span><span class="n">nave</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>189</pre>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -979,10 +854,47 @@ Number of time instances: 301
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As expected, number of channels and number of time instances do not change when epoched data converted to evoked data since the averaging is done over trials.</p>
+<p>Again, we can visualize the averaged epochs for the first electrode. Compared to the single-trial epochs, the averaged ones are much smoother:</p>
 
 </div>
 </div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">evoked</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Average epoched data, for electrode 0&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/DataLoading_39_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
 </div>
 </div>
 

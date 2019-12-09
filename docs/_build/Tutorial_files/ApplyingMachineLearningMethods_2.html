@@ -61,8 +61,9 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+<span class="c1"># ignore all future warnings</span>
+<span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -116,14 +117,13 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load Dataset</span>
 <span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;../../study1/study1_eeg/epochdata/&#39;</span>
 <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_folder</span><span class="o">+</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="s1">&#39;.DS_Store&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
 
 <span class="n">numberOfEpochs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
 <span class="c1"># Read the EEG epochs:</span>
 <span class="n">epochs_all_UN</span><span class="p">,</span> <span class="n">epochs_all_UP</span><span class="p">,</span> <span class="n">epochs_all_NP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
-    <span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
     <span class="n">epochs_UN</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span>
     <span class="n">epochs_UP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
     <span class="n">epochs_NP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FN&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
@@ -145,79 +145,6 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[&#39;../../study1/study1_eeg/epochdata/P-15.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-01.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-14.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-02.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-16.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-17.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-03.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-07.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-13.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-12.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-06.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-10.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-04.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-05.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-11.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-20.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-08.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-09.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-21.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-23.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-22.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-26.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-27.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-24.fif&#39;, &#39;../../study1/study1_eeg/epochdata/P-18.fif&#39;]
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-15.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-01.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-14.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-02.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-16.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-17.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-03.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-07.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-13.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-12.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-06.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-10.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-04.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-05.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-11.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-20.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-08.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-09.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-21.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-23.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-22.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-26.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-27.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-24.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-&lt;ipython-input-129-562ad0ae883b&gt;:11: RuntimeWarning: This filename (../../study1/study1_eeg/epochdata/P-18.fif) does not conform to MNE naming conventions. All epochs files should end with -epo.fif, -epo.fif.gz, _epo.fif or _epo.fif.gz
-  epochs = mne.read_epochs(files[f], verbose=False)
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -410,7 +337,7 @@ Shape of epochs_NP: (25, 2)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">kfold</span><span class="p">):</span>
-    <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
     
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)):</span>
@@ -418,6 +345,7 @@ Shape of epochs_NP: (25, 2)
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
             <span class="n">cv_accuracy_perparticipant</span><span class="p">,</span> <span class="n">unique_ids</span> <span class="o">=</span> <span class="n">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
             <span class="n">results_perParticipant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy_perparticipant</span><span class="p">)</span>
+            <span class="n">unique_ids_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">)</span>
             <span class="n">cv_accuracy</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV accuracy of model &#39;</span> <span class="o">+</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">))</span>
@@ -425,7 +353,7 @@ Shape of epochs_NP: (25, 2)
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Data has infinite or NaN value!&#39;</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span>
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span>
 </pre></div>
 
     </div>
@@ -443,7 +371,7 @@ Shape of epochs_NP: (25, 2)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UP</span><span class="p">,</span> <span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>
+<span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UP</span><span class="p">,</span> <span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -458,92 +386,8 @@ Shape of epochs_NP: (25, 2)
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>LR
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LR: [0.52369338 0.50627178 0.51498258]
-CV accuracy of model LR per participant: [0.52734375, 0.5206611570247934, 0.5188284518828452, 0.49606299212598426, 0.5095057034220533, 0.49551569506726456, 0.5639097744360902, 0.5658263305322129, 0.44808743169398907, 0.5275938189845475, 0.5217391304347826, 0.4520547945205479, 0.4618834080717489, 0.5054945054945055, 0.5745192307692307, 0.4814004376367615, 0.5213414634146342, 0.47586206896551725, 0.49814126394052044, 0.5318559556786704, 0.48091603053435117, 0.4801762114537445, 0.5483193277310925, 0.5495283018867925, 0.5329815303430079]
+CV accuracy of model LR: [0.38266017 0.34912892 0.37377964]
+CV accuracy of model LR per participant: [0.21484375, 0.4628099173553719, 0.33472803347280333, 0.452755905511811, 0.3193916349809886, 0.21076233183856502, 0.35714285714285715, 0.29971988795518206, 0.26229508196721313, 0.3598233995584989, 0.4106280193236715, 0.4246575342465753, 0.21524663677130046, 0.4230769230769231, 0.36778846153846156, 0.4310722100656455, 0.4298780487804878, 0.41724137931034483, 0.2936802973977695, 0.43490304709141275, 0.31679389312977096, 0.4251101321585903, 0.40336134453781514, 0.4363207547169811, 0.2928759894459103]
 LDA
 </pre>
 </div>
@@ -553,72 +397,18 @@ LDA
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&#34;Variables are collinear.&#34;)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/base.py:291: RuntimeWarning: invalid value encountered in greater
-  indices = (scores &gt; 0).astype(np.int)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/lib/nanfunctions.py:1545: RuntimeWarning: overflow encountered in multiply
-  sqr = np.multiply(arr, arr, out=arr)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
 </pre>
 </div>
 </div>
@@ -627,22 +417,8 @@ LDA
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LDA: [0.51428571 0.50627178 0.50766551]
-CV accuracy of model LDA per participant: [0.5390625, 0.5495867768595041, 0.4811715481171548, 0.4921259842519685, 0.5095057034220533, 0.4730941704035874, 0.5375939849624061, 0.5210084033613446, 0.4207650273224044, 0.5474613686534217, 0.4806763285024155, 0.5, 0.5605381165919282, 0.47802197802197804, 0.5240384615384616, 0.49452954048140046, 0.4969512195121951, 0.4586206896551724, 0.5092936802973977, 0.5318559556786704, 0.5114503816793893, 0.5110132158590308, 0.5189075630252101, 0.5, 0.5408970976253298]
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: invalid value encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/base.py:291: RuntimeWarning: invalid value encountered in greater
-  indices = (scores &gt; 0).astype(np.int)
+<pre>CV accuracy of model LDA: [0.32625348 0.31358885 0.28870293]
+CV accuracy of model LDA per participant: [0.12890625, 0.3512396694214876, 0.2301255230125523, 0.3425196850393701, 0.3612167300380228, 0.2556053811659193, 0.34210526315789475, 0.3081232492997199, 0.2185792349726776, 0.3686534216335541, 0.3357487922705314, 0.3184931506849315, 0.21076233183856502, 0.37637362637362637, 0.2644230769230769, 0.4113785557986871, 0.3871951219512195, 0.2655172413793103, 0.2825278810408922, 0.3296398891966759, 0.24427480916030533, 0.27312775330396477, 0.29411764705882354, 0.36556603773584906, 0.28232189973614774]
 </pre>
 </div>
 </div>
@@ -713,13 +489,13 @@ CV accuracy of model LDA per participant: [0.5390625, 0.5495867768595041, 0.4811
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Results UP: [array([0.52369338, 0.50627178, 0.51498258]), array([0.51428571, 0.50627178, 0.50766551])]
-Mean cv accuracies UP: [0.5149825783972125, 0.5094076655052264]
-Std cv accuracies UP: [0.008710801393728207, 0.0042816047830816755]
+<pre>Results UP: [array([0.38266017, 0.34912892, 0.37377964]), array([0.32625348, 0.31358885, 0.28870293])]
+Mean cv accuracies UP: [0.36852290812317, 0.3095150869795531]
+Std cv accuracies UP: [0.017372709567566594, 0.01910386526397282]
 
 
-Mean cv accuracies: [[0.5149825783972125, 0.5094076655052264]]
-Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
+Mean cv accuracies: [[0.36852290812317, 0.3095150869795531]]
+Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
 </pre>
 </div>
 </div>
@@ -792,7 +568,7 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids_all</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -897,7 +673,7 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Independent t-test is applied to statistically show whether there is a significant difference between performace of two models. Small p-value means that performace of models are significantly different, large p-value indicates that models are performing similar. In general, as the threshold for determining whether two distributions are different or not p = 0.05 is preffered.</p>
+<p>Independent t-test is applied to statistically show whether there is a significant difference between performace of two models. Small p-value means that performace of models are significantly different, large p-value indicates that models are performing similar. In general, as the threshold for determining whether two distributions are different or not, p = 0.05 which corresponds to 95% confidence level is preffered.</p>
 
 </div>
 </div>
@@ -949,7 +725,7 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>p = 0.37612545243913403 for t-test between LR and LDA
+<pre>p = 0.016704736667900663 for t-test between LR and LDA
 </pre>
 </div>
 </div>
@@ -964,7 +740,7 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Since p-value is larger than 0.05, we can conclude that there is no significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and pleasant events.</p>
+<p>Since p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and pleasant events.</p>
 
 </div>
 </div>
@@ -993,21 +769,6 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>float64
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -1044,7 +805,7 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">results_UN</span><span class="p">,</span> <span class="n">results_perParticipant_UN</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UN</span><span class="p">,</span> <span class="n">data_UN_new</span><span class="p">,</span> <span class="n">labels_UN_new</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>    
+<span class="n">results_UN</span><span class="p">,</span> <span class="n">results_perParticipant_UN</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UN</span><span class="p">,</span> <span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>    
 </pre></div>
 
     </div>
@@ -1059,63 +820,6 @@ Std cv accuracies: [[0.008710801393728207, 0.0042816047830816755]]
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>LR
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LR: [0.28741259 0.29356193 0.2940147 ]
-CV accuracy of model LR per participant: [0.27710843373493976, 0.25840336134453784, 0.17647058823529413, 0.39194139194139194, 0.33976833976833976, 0.29555555555555557, 0.34657039711191334, 0.31092436974789917, 0.2552083333333333, 0.20408163265306123, 0.2634146341463415, 0.34172661870503596, 0.22707423580786026, 0.3140495867768595, 0.0997624703087886, 0.48394495412844035, 0.40752351097178685, 0.3546099290780142, 0.2743682310469314, 0.2528409090909091, 0.10150375939849623, 0.3303370786516854, 0.386411889596603, 0.32, 0.2159383033419023]
-LDA
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
 </pre>
 </div>
 </div>
@@ -1150,23 +854,6 @@ LDA
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[array([0.30161943, 0.2854251 , 0.30267423]), array([0.27935223, 0.25546559, 0.25405186])]
-[[0.5149825783972125, 0.5094076655052264], [0.2965729215196075, 0.26295655920751887]]
-[[0.008710801393728207, 0.0042816047830816755], [0.009668690310227143, 0.014216648276344255]]
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1184,24 +871,6 @@ LDA
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_36_0.png"
->
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1216,21 +885,6 @@ LDA
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>p = 0.027617003699447643 for t-test between LR and LDA
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -1270,21 +924,6 @@ LDA
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>float64
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -1328,95 +967,6 @@ LDA
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>float64
-LR
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/linear_model/logistic.py:469: FutureWarning: Default multi_class will be changed to &#39;auto&#39; in 0.22. Specify the multi_class option to silence this warning.
-  &#34;this warning.&#34;, FutureWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LR: [0.3997599  0.36389111 0.41129355]
-CV accuracy of model LR per participant: [0.5145228215767634, 0.44106463878326996, 0.18, 0.35494880546075086, 0.36666666666666664, 0.43526785714285715, 0.23902439024390243, 0.3669064748201439, 0.41952506596306066, 0.28354430379746837, 0.4492099322799097, 0.4707692307692308, 0.4270833333333333, 0.3678571428571429, 0.4555256064690027, 0.2932330827067669, 0.5140997830802603, 0.4802494802494803, 0.43387470997679817, 0.27692307692307694]
-LDA
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LDA: [0.35534214 0.31905524 0.34321185]
-CV accuracy of model LDA per participant: [0.42946058091286304, 0.4144486692015209, 0.14222222222222222, 0.3447098976109215, 0.24166666666666667, 0.39285714285714285, 0.3170731707317073, 0.34532374100719426, 0.36939313984168864, 0.21012658227848102, 0.41309255079006774, 0.4, 0.3645833333333333, 0.3535714285714286, 0.3665768194070081, 0.2894736842105263, 0.3600867678958785, 0.4490644490644491, 0.4037122969837587, 0.16153846153846155]
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1444,23 +994,6 @@ CV accuracy of model LDA per participant: [0.42946058091286304, 0.41444866920152
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[array([0.3997599 , 0.36389111, 0.41129355]), array([0.35534214, 0.31905524, 0.34321185])]
-[[0.5149825783972125, 0.5094076655052264], [0.2965729215196075, 0.26295655920751887], [0.3916481897048707, 0.3392030784250561]]
-[[0.008710801393728207, 0.0042816047830816755], [0.009668690310227143, 0.014216648276344255], [0.024720391294445924, 0.018472611003307753]]
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1478,24 +1011,6 @@ CV accuracy of model LDA per participant: [0.42946058091286304, 0.41444866920152
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_44_0.png"
->
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1510,21 +1025,6 @@ CV accuracy of model LDA per participant: [0.42946058091286304, 0.41444866920152
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>p = 0.04223974717546009 for t-test between LR and LDA
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -1602,24 +1102,6 @@ CV accuracy of model LDA per participant: [0.42946058091286304, 0.41444866920152
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_49_0.png"
->
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1637,24 +1119,6 @@ CV accuracy of model LDA per participant: [0.42946058091286304, 0.41444866920152
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_50_0.png"
->
-</div>
-
-</div>
-</div>
 </div>
 </div>
 
