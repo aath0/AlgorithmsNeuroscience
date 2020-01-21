@@ -42,6 +42,7 @@
     url: /Tutorial_files/AcquiringData
     not_numbered: true
 
+- divider: true
 
 - title: Preprocessing
   url: /Tutorial_files/preprocess
@@ -61,6 +62,8 @@
     url: /Tutorial_files/ReferencingforEEGdata
     not_numbered: true
 
+- divider: true
+
 - title: Machine Learning 
   url: /Tutorial_files/ml
   not_numbered: false
@@ -79,8 +82,18 @@
     url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions
     not_numbered: true
 
+- divider: true
+
 - title: About Us
   url: /Tutorial_files/About
   not_numbered: false
+
+- divider: true
+
+- title: Outline
+  url: /Tutorial_files/Outline
+  not_numbered: false
+
+  
 
 
