@@ -5,15 +5,15 @@ interact_link: content/Tutorial_files/ApplyingMachineLearningMethodstoTemporalDi
 kernel_name: python3
 has_widgets: false
 title: |-
-  Analysis on Temporal Dimension
+  Classication over time
 prev_page:
   url: /Tutorial_files/ApplyingMachineLearningMethods_2.html
   title: |-
-    Group Level Analysis
+    Group-Level Analysis
 next_page:
-  url: 
+  url: /Tutorial_files/About.html
   title: |-
-    
+    About Us
 suffix: .ipynb
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
@@ -35,7 +35,13 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial, same classification tasks in last two tutorails will be examined on temporal dimensions of eeg data.</p>
+<p>In this tutorial, we will apply classification on the same EEG data as in the previous cases (link), but taking advantage of the temporal dimension of the data.</p>
+<p>In the previous tutorials (link) we examined whether it is possible to classify EEG responses to different stimuli, at all. However, the classification was agnostic of time. It just informed that somewhere in the brain, at some point in time, there were differential EEG responses to different stimuli (to check).</p>
+<p>Here, we go one step further, and ask the questions:</p>
+<ul>
+<li>(a) Can we classify EEG resposnes to different images?</li>
+<li>(b) When in time is there discriminant EEG activity?</li>
+</ul>
 
 </div>
 </div>
@@ -46,7 +52,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this strategy, selected model will be fitted to each time instance and performance of the model at each time instance will be evaluated on the same time instance in new epochs.</p>
+<p>To answer these questions, we will use the same algorithms as in the previous tutorials (link), but this time, we will train one classifier at each time instance and we will evaluate the performance of the model at each time instance in new epochs.</p>
 
 </div>
 </div>
@@ -57,7 +63,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SlidingEstimator in MNE package is provided for this purpose. It takes the model and optionally a scoring function as parameters to create a sliding estimator. After having created a sliding estimator, it can be fitted to the data, scored the estimator on each task or made predictions on new epochs.</p>
+<p>The function SlidingEstimator in MNE package is provided for this purpose. This takes the model and optionally a scoring function as parameters to create a time-point by time-point classifier. After having created a sliding estimator, it can be fitted to the data, scored the estimator on each task or made predictions on new epochs.</p>
 
 </div>
 </div>

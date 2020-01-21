@@ -5,15 +5,15 @@ interact_link: content/Tutorial_files/ApplyingMachineLearningMethods_1.ipynb
 kernel_name: python3
 has_widgets: false
 title: |-
-  Participant Level Analysis
+  Single-Participant Analysis
 prev_page:
   url: /Tutorial_files/DatasetConstruction.html
   title: |-
-    Constructing Dataset
+    Formatting a dataset
 next_page:
   url: /Tutorial_files/ApplyingMachineLearningMethods_2.html
   title: |-
-    Group Level Analysis
+    Group-Level Analysis
 suffix: .ipynb
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
@@ -25,7 +25,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Tutorial-#4:-Applying-Machine-Learning-Methods-to-EEG-Data-on-Participant-Level">Tutorial #4: Applying Machine Learning Methods to EEG Data on Participant Level<a class="anchor-link" href="#Tutorial-#4:-Applying-Machine-Learning-Methods-to-EEG-Data-on-Participant-Level"> </a></h2>
+<h2 id="Tutorial-#4:-Machine-Learning-Algorithms-for-EEG-Data-of-Single-Participants">Tutorial #4: Machine Learning Algorithms for EEG Data of Single Participants<a class="anchor-link" href="#Tutorial-#4:-Machine-Learning-Algorithms-for-EEG-Data-of-Single-Participants"> </a></h2>
 </div>
 </div>
 </div>
@@ -35,22 +35,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial, machine learning methods that are commonly preferred for EEG analysis will be discussed. Additionally different techinques for approaching a classification problem on eeg data of 1 participant will be demonstrated.</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>As the dataset for this tutorial, 'Emotion-Antecedent Appraisal Checks:
-EEG and EMG data sets for Novelty and Pleasantness' selected. In this dataset, there are 26 participants, each have varying number of trials. There are three main categories as Target, Novel and Familar. Athough 70% of all images are in familiar category, 20% of them belongs to novel category and the rest is Target, each category has equal portion of Pleasant, Unpleasant and Neutral color images. If an image among 'Pleasant' images is selected and if it is also familiar to the participant, then the trial that is conducted with this image have 'FP' (Familiar-Pleasant) label. 
-Therefore, in total there are 6 categories in this dataset. However number of categories may be changed by combining trials with the same familiarity level or the same pleasantness level.</p>
-<p>Since familar images forms the 70% of the dataset, trials with familiar pictures will be used throughout this tutorial to analyse effects of stimuli with different pleasantness levels on eeg.</p>
-<p>Note that, only one participant will be used in this tutorial.</p>
+<p>In this tutorial, we will introduce how machine learning (ML) algorithms can be applied on EEG data.</p>
 
 </div>
 </div>
@@ -61,7 +46,29 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5 id="Machine-Learning-Methods:">Machine Learning Methods:<a class="anchor-link" href="#Machine-Learning-Methods:"> </a></h5><p>For modelling eeg data, there are three common methods: Support Vector Machines, Linear Discriminant Analysis and Logistic Regression. These methods will be employed for modeling two class problems. In the end, we will get 3 models per method.</p>
+<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>For demonstration purposes, we will use the 'Emotion-Antecedent Appraisal Checks:
+EEG and EMG data sets for Novelty and Pleasantness' dataset. In this dataset there are 26 participants, each of them viewing a series of images (familiar/novel/target) with varying levels of pleantness (pleasant/unpleasant/neutral).</p>
+<p>We thus label EEG responses to images by two letters: the first indicates level of familiarity (e.g. F for Familiar) and the second the level of pleasantness (e.g. P for pleasant). For example, the label 'FP' indicates an EEG response to a Familar-Pleasant image.</p>
+<p>As the vast majority of presented images were familar (70% of the total images), for this tutorial we will use familiar pictures to classify whether a presented image was pleasant, unpleasant or neutral, based on EEG responses alone.</p>
+<p>Note that only one participant will be used in this tutorial.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="Machine-Learning-Algorithms:">Machine Learning Algorithms:<a class="anchor-link" href="#Machine-Learning-Algorithms:"> </a></h5><p>When it comes to classification of EEG data, there are numerous possibilities. One needs to choose:</p>
+<ul>
+<li>(a) the type of algorithm that will be used</li>
+<li>(b) whether it will be applied in time or space</li>
+<li>(c) whether it will be applied at the group or single participant level</li>
+</ul>
+<p>Some commonly used algorithms for classifying EEG data are: <a href="https://scikit-learn.org/stable/modules/svm.html">Support Vector Machines</a>, <a href="https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html">Linear Discriminant Analysis</a> or <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">Logistic Regression</a>.</p>
+<p>These methods will be employed here for demonstrating a simple case of a 2-class classification, for all possible combinations of EEG responses in the employed dataset (e.g. pleasant vs. unpleasant, or pleasant vs. neutral, or neutral vs. unpleasant). In the end, we will have 3 classifiers for each algorithm.</p>
 
 </div>
 </div>
@@ -120,7 +127,7 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As the first step, load epoch data from file. Please note that originally, this dataset is given in csv file. However it cannot be used directly as it is with MNE library. Therefore, if you want to proceed this tutorial, firstly go through the tutorial named 'study1'.</p>
+<p>At the first step, we will simply load epoched EEG data, which here have been converted to an MNE format. To obtain more information about this format, please refer to the tutorial named 'study1'.</p>
 
 </div>
 </div>
@@ -138,7 +145,6 @@ Therefore, in total there are 6 categories in this dataset. However number of ca
 
 <span class="c1"># Read the EEG epochs:</span>
 <span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">data_file</span> <span class="o">+</span> <span class="s1">&#39;.fif&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">epochs</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -173,43 +179,9 @@ Not setting metadata
 
 <div class="jb_cell">
 
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">epochs</span><span class="o">.</span><span class="n">event_id</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;FP&#39;: 0, &#39;FN&#39;: 1, &#39;FU&#39;: 2, &#39;NN&#39;: 3, &#39;NP&#39;: 4, &#39;NU&#39;: 5}</pre>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Keep familiar events only. Among FU, FN and FP events, create datasets with all possible event type pairs to build models for binary classification.</p>
+<p>Now, we will focus on EEG responses to familiar images (event code 'F'). To this aim, we retain EEG responses to FU, FN and FP events (familiar unpleasant/pleasant/neutral), and create datasets with all possible combinations. These will be later used for a binary classification:</p>
 
 </div>
 </div>
@@ -223,9 +195,9 @@ Not setting metadata
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">epochs_UN</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span>
-<span class="n">epochs_UP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
-<span class="n">epochs_NP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FN&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">epochs_UN</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span> <span class="c1"># Unpleasant vs. Neutral</span>
+<span class="n">epochs_UP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span> <span class="c1"># Unpleasant vs. Pleasant</span>
+<span class="n">epochs_NP</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="s1">&#39;FN&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span> <span class="c1"># Neutral vs. Pleasant</span>
 </pre></div>
 
     </div>
@@ -249,7 +221,7 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Get data and the label for the dataset with unpleasant and neutral events.</p>
+<p>We first get the EEG data and corresponding labels for the dataset containing EEG responses to unpleasant (U) and neutral (N) images:</p>
 
 </div>
 </div>
@@ -279,7 +251,9 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Split dataset into two sub-datasets as training set and test set with 70 - 30 ratio.</p>
+<p>Next, we need to split this dataset into training and test. The training set will be used to train our classifier, while the test set to test its classification performance on unseen data.</p>
+<p>To this aim, we are using the sklearn function <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html?highlight=train_test_split#sklearn.model_selection.train_test_split">train_test_split</a>.</p>
+<p>Here we select a 70:30 ratio (Training:Test).</p>
 
 </div>
 </div>
@@ -307,9 +281,11 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Construct the pipeline with make_pipeline() function of sklearn library. The steps should be defined in the order of execution. Apart from the classifier, Vectorizer() and StandardScaler() will be used. The purpose of using Vectorizer is to convert eeg data from (n_epochs, n_channels, n_times) structure to a vector of (samples x channels) form.</p>
-<p>After having vectorized data, StandardScaler standardizes data feature-wise by following standard score technique which has the formulation of z = (x - u) / s. In this formula, u is the mean of the feature and s is the standard deviation of the same feature. By applying this technique, each feature's mean and standard deviation will become zero and one respectively. Standardization of features, which are eeg channels in our case, prevent domination of a channel(or a feature) just becuase it contains larger variation.</p>
-<p>The final parameter of make_pipeline() will be the machine learning model. In the folowing example, the selected model is support vector machine model with rbf kernel and penalty parameter C=1.</p>
+<p>Next, we will construct a pipeline for classification with the function <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.make_pipeline.html">make_pipeline()</a> of the <a href="https://scikit-learn.org/stable/index.html">sklearn library</a>. The steps in this function should be defined in the order of execution.</p>
+<p>Before applying a classifier, the function <a href="https://mne.tools/dev/generated/mne.decoding.Vectorizer.html">Vectorizer()</a>. The purpose of using Vectorizer is to convert EEG data from (n_epochs, n_channels, n_times) structure to a vector of (samples, channels) form.</p>
+<p>Moreover, we will use <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html">StandardScaler()</a> to remove the mean and scale to unit variance. StandardScaler standardizes our data feature-wise by the formulation of z = (x - u) / s. In this formula, u is the mean of the feature and s is the standard deviation of the same feature. By applying this technique, each feature's mean and standard deviation will become zero and one respectively. Standardization of features, which are eeg channels in our case, prevent domination of a channel(or a feature) just becuase it contains larger variation.</p>
+<p>The final parameter of make_pipeline() will be the machine learning algorithm that we use for classification. In the folowing example, the selected algorithm is support vector machine with 'rbf' kernel and penalty parameter C=1. You can find more information about these parameters <a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html">here</a>.</p>
+<p>The final pipeline will look like this:</p>
 
 </div>
 </div>
@@ -337,9 +313,12 @@ Not setting metadata
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If the hyperparameters for the classifier is determined in advance, they can be directly fixed as in above cell. However, usually it is quite difficult to determine optimal hyperparameters before testing different values for each parameter. If we test each parameter manually, we end up with another issue named overfitting. In such a case we would train the classifier with training set and test the performance on test set. So, we optimized parameters on the test set. In general, test set is smaller that training set and it may change when the trained classifier is being started to use in real systems. Therefore, having an overfitted model to test set would not provide a good generalization.</p>
-<p>For this problem cross validation would be a solution. In this approach, training set is devided into equally sized folds and trials run on different folds. In this way, hypeparameters will not be optimized on just one dataset, instead different chuncks of data will be used for hyperparameter optimization. Note that, at each trial one fold will be excluded from the training set and excluded fold will be used as test set during evaluation.</p>
-<p>For cross validation, sklearn libarary has a method cross_val_score which runs cross validation and calculates and returns the accuracy of each fold. Number of folds is parameter for this function but as a heuristic, the 5-fold or 10-fold cross validation is preferred.</p>
+<p>In the above line, we specified two parameters for our classifier, 'kernel' and 'C'. In this case, these parameters were fixed, i.e. they were determined in advance.</p>
+<p>However, in most applications of ML algorithms it is not possible to determine optimal hyperparameters in advance. What is usually done is that we test a range of values for each parameter, and then, select the combination of parameters that give the optimal classification performance.</p>
+<p>This is theory can majorly improve classification results. However, if we test each parameter manually, we end up with another issue named overfitting.</p>
+<p>In such a case we would train the classifier with training set and test the performance on test set. So, we optimized parameters on the test set. In general, test set is smaller that training set and it may change when the trained classifier is being started to use in real systems. Therefore, having an overfitted model to test set would not provide a good generalization.</p>
+<p>For this problem, cross validation would be a solution. In this approach, training set is devided into equally sized folds and trials run on different folds. In this way, hypeparameters will not be optimized on just one dataset, instead different chuncks of data will be used for hyperparameter optimization. Note that, at each trial one fold will be excluded from the training set and excluded fold will be used as test set during evaluation.</p>
+<p>For cross validation, sklearn libarary has a method <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html?highlight=cross_val_score#sklearn.model_selection.cross_val_score">cross_val_score</a> which runs cross validation and calculates the accuracy of each fold. The number of folds is a parameter that is required in this function but as a heuristic, the 5-fold or 10-fold cross validation is preferred.</p>
 
 </div>
 </div>
@@ -394,7 +373,8 @@ Accuracy of 5th fold is 0.673469387755102
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Another option is GridSearchCV which searchs the best performing parameters among the given list of possible parameter values exhaustedly. You can specify the scoring method and cross validation strategy inside GridSearchCV. In the following example StratifiedKFold strategy is selected. The benefit of using this stratefy is that it divides data into folds with approxiamtely same percentage of classes as the whole dataset.</p>
+<p>Another option is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html?highlight=gridsearchcv#sklearn.model_selection.GridSearchCV">GridSearchCV</a> which searchs the best performing parameters among the given list of possible parameter values exhaustedly. You can specify the scoring method and cross validation strategy inside GridSearchCV.</p>
+<p>In the following example StratifiedKFold strategy is selected. The benefit of using this strategy is that it divides data into folds with approxiamtely same percentage of classes as the whole dataset.</p>
 
 </div>
 </div>
@@ -425,7 +405,7 @@ Accuracy of 5th fold is 0.673469387755102
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Train the classifier by passing training data and thier labels to fit() function.</p>
+<p>Once we have optimized the classifier, we can train it. Training is done by passing the training data and their labels to fit() function.</p>
 
 </div>
 </div>
@@ -481,7 +461,8 @@ Best Score: 0.7011494252873564
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, evaluate the model on test set. With classification_report function you are able to get precision, recall, f1-score and accuracy at the same time. If you want to have accuracy or other metrics separately, you can directly use sklearn's accuracy_score() or precision_recall_fscore_support() functions. If you use precision_recall_fscore_support() with average='macro' parameter, it calculates each metric by averaging all classes without weights.</p>
+<p>Finally, we evaluate the fitted classifier on the test set. As a reminder, this is a set that has not been used for training the classifier.</p>
+<p>With the function classification_report we can optain  precision, recall, f1-score and accuracy. If you want to obtain accuracy or other metrics separately, you can directly use sklearn's accuracy_score() or precision_recall_fscore_support() functions. If you use precision_recall_fscore_support() with average='macro' parameter, it calculates each metric by averaging all classes without weights.</p>
 
 </div>
 </div>
@@ -546,7 +527,7 @@ Precision: 0.7332826747720365, Recall: 0.7183499288762447, f1-score:0.7149321266
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The same steps can be applied to train any other machine learning models.</p>
+<p>The same steps can be applied to train any other machine learning algorithms.</p>
 
 </div>
 </div>
@@ -1248,7 +1229,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to demonstrate the accuracy values of all three tasks together, bar plot is employed as following:</p>
+<p>In order to demonstrate the accuracy values of all three tasks together, we use bar plots:</p>
 
 </div>
 </div>
@@ -1335,7 +1316,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 
 <div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_1_48_0.png"
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_1_47_0.png"
 >
 </div>
 
@@ -1373,7 +1354,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 
 <div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_1_49_0.png"
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_1_48_0.png"
 >
 </div>
 
@@ -1389,7 +1370,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Results">Results<a class="anchor-link" href="#Results"> </a></h3>
+<h3 id="Overview">Overview<a class="anchor-link" href="#Overview"> </a></h3>
 </div>
 </div>
 </div>
@@ -1399,9 +1380,9 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>On participant with id P01 data SVM, three different tasks are tested and for that, Logistic Regression (LR) and Linear Discriminant Analysis (LDA) models are built. The test accuracy values obtained from the models are provided  in the first plot above. According to the results, LDA provided the best perfromance on the first task which is classification of unpleasant and neutral events. For classification of unpleasant and pleasant events, logistic regression is the best performing model by surpassing LDA slightly. For the third task that classifies neutraland pleasant events, accuracy values are very similar. Although till now it is mentioned that certain models performed better on certain tasks, anyone could not reach above 75%.</p>
-<p>Although accuracy is one of the most common evaluation metrics for machine learning models, it is not enough to conclude a model is performing than another. It may be deceptive in some cases. For example when a model classifies a majority of the instances to one class, accuracy can still be high if the classes are highly imbalanced. Another case would be when false postive and false negative have different consequences. Especially in medical domain, this case an important aspect while evaluating models. Therefore, precision, recall and f1-score, which is a metric combining precision and recall, should be considered besides accuracy.</p>
-<p>F1-scores plot (second plot) demonstrates result similar to accuracy plot. So, it cannot be said that one model performing the best on all tasks and for all metrics that we calculated, values do not vary a lot.</p>
+<p>We train three different classifiers to classify EEG responses to three different conditions, at the single participant level. The test accuracy values obtained from the models are provided  in the first plot above. According to the results, LDA provided the best perfromance on the first task which is classification of unpleasant and neutral events. For classification of unpleasant and pleasant events, logistic regression is the best performing model by surpassing LDA slightly. For the third task that classifies neutraland pleasant events, accuracy values are very similar. Although till now it is mentioned that certain models performed better on certain tasks, anyone could not reach above 75%.</p>
+<p>Although accuracy is one of the most common evaluation metrics for machine learning models, it is not enough to conclude a model is performing than another. It may be deceptive in some cases. For example when a model classifies a majority of the instances to one class, accuracy can still be high if the classes are highly imbalanced. Another case would be when false postive and false negative have different consequences. Especially in the medical domain, this case is an important aspect while evaluating models. Therefore, precision, recall and f1-score, which is a metric combining precision and recall, should be considered besides accuracy.</p>
+<p>The plot of F1-scores (second plot) demonstrates results similar to the accuracy plot.</p>
 
 </div>
 </div>

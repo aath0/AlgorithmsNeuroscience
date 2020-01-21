@@ -5,15 +5,15 @@ interact_link: content/Tutorial_files/ApplyingMachineLearningMethods_2.ipynb
 kernel_name: python3
 has_widgets: false
 title: |-
-  Group Level Analysis
+  Group-Level Analysis
 prev_page:
   url: /Tutorial_files/ApplyingMachineLearningMethods_1.html
   title: |-
-    Participant Level Analysis
+    Single-Participant Analysis
 next_page:
   url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions.html
   title: |-
-    Analysis on Temporal Dimension
+    Classication over time
 suffix: .ipynb
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
@@ -91,6 +91,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span><span class="p">,</span> <span class="n">cross_val_predict</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">precision_recall_fscore_support</span><span class="p">,</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
 
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
 
@@ -274,15 +275,22 @@ Shape of epochs_NP: (25, 2)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ids: &#39;</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;predictions: &#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;labels: &#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
     <span class="n">unique_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
-    <span class="n">unique_ids</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unique: &#39;</span><span class="p">,</span> <span class="n">unique_ids</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">unique_ids</span><span class="p">:</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">id</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;len indices: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
         <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">predictions</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]:</span>
                 <span class="n">res</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;res: &#39;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
     
     <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">unique_ids</span>
@@ -318,8 +326,8 @@ Shape of epochs_NP: (25, 2)
 <span class="c1">#Logistic Regression</span>
 <span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
 
-<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
-<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> 
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">clf_lda_pip</span><span class="p">]</span> <span class="c1">#clf_lr_pip</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> <span class="c1">#&#39;LR&#39;, </span>
 </pre></div>
 
     </div>
@@ -385,10 +393,7 @@ Shape of epochs_NP: (25, 2)
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>LR
-CV accuracy of model LR: [0.38266017 0.34912892 0.37377964]
-CV accuracy of model LR per participant: [0.21484375, 0.4628099173553719, 0.33472803347280333, 0.452755905511811, 0.3193916349809886, 0.21076233183856502, 0.35714285714285715, 0.29971988795518206, 0.26229508196721313, 0.3598233995584989, 0.4106280193236715, 0.4246575342465753, 0.21524663677130046, 0.4230769230769231, 0.36778846153846156, 0.4310722100656455, 0.4298780487804878, 0.41724137931034483, 0.2936802973977695, 0.43490304709141275, 0.31679389312977096, 0.4251101321585903, 0.40336134453781514, 0.4363207547169811, 0.2928759894459103]
-LDA
+<pre>LDA
 </pre>
 </div>
 </div>
@@ -401,24 +406,6 @@ LDA
   warnings.warn(&#34;Variables are collinear.&#34;)
 /anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
   warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>CV accuracy of model LDA: [0.32625348 0.31358885 0.28870293]
-CV accuracy of model LDA per participant: [0.12890625, 0.3512396694214876, 0.2301255230125523, 0.3425196850393701, 0.3612167300380228, 0.2556053811659193, 0.34210526315789475, 0.3081232492997199, 0.2185792349726776, 0.3686534216335541, 0.3357487922705314, 0.3184931506849315, 0.21076233183856502, 0.37637362637362637, 0.2644230769230769, 0.4113785557986871, 0.3871951219512195, 0.2655172413793103, 0.2825278810408922, 0.3296398891966759, 0.24427480916030533, 0.27312775330396477, 0.29411764705882354, 0.36556603773584906, 0.28232189973614774]
 </pre>
 </div>
 </div>
