@@ -22,21 +22,7 @@
 # See the links below for an example.
 
 
-- title: Preprocessing
-  url: /Tutorial_files/preprocess
+- title: Outline
+  url: /Tutorial_files/Outline
   not_numbered: false
-  expand_sections: true
-  sections:
-  - title: Data Loading
-    url: /Tutorial_files/DataLoading
-    not_numbered: true
-  - title: Data Visualization
-    url:  /Tutorial_files/DataVisualization
-    not_numbered: true
-  - title: Baseline Correction
-    url: /Tutorial_files/BaselineCorrection
-    not_numbered: true
-  - title: Choosing a Reference
-    url: /Tutorial_files/ReferencingforEEGdata
-    not_numbered: true
 
