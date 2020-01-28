@@ -33,11 +33,4 @@
 - title: Introduction to Signal Processing
   url: /Tutorial_files/introToSP
   not_numbered: false
-  expand_sections: true
-  sections:
-  - title: Temporal Vs. Spectral Space
-    url:  /Tutorial_files/Temporal_vs_Spectral
-    not_numbered: true
-  - title: Acquiring Data
-    url: /Tutorial_files/AcquiringData
-    not_numbered: true
+
