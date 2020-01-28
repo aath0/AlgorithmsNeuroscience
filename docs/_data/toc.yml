@@ -22,12 +22,10 @@
 # See the links below for an example.
 
 
-# Top-level page
-- title: Background
-  url: /Tutorial_files/Introduction
+- title: About Us
+  url: /Tutorial_files/About
   not_numbered: false
 
-# Divider for meta-pages and content page
 - divider: true
 
 
