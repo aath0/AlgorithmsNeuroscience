@@ -30,7 +30,4 @@
 # Divider for meta-pages and content page
 - divider: true
 
-- title: Introduction to Signal Processing
-  url: /Tutorial_files/introToSP
-  not_numbered: false
 
