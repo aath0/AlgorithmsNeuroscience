@@ -3,25 +3,24 @@ redirect_from:
   - "/tutorial-files/applyingmachinelearningmethods-1"
 interact_link: content/Tutorial_files/ApplyingMachineLearningMethods_1.ipynb
 kernel_name: python3
+kernel_path: content/Tutorial_files
 has_widgets: false
 title: |-
   Single-Participant Analysis
+pagenum: 11
 prev_page:
   url: /Tutorial_files/DatasetConstruction.html
-  title: |-
-    Formatting a dataset
 next_page:
   url: /Tutorial_files/ApplyingMachineLearningMethods_2.html
-  title: |-
-    Group-Level Analysis
 suffix: .ipynb
+search: eeg classification sklearn test data set pleasant unpleasant neutral html scikit learn org stable training accuracy dataset modules generated used events classifier machine responses function parameter model models learning algorithms images example case task modelselection parameters not different tutorial familiar f train values cross validation fold gridsearchcv applied level e algorithm svm logistic here possible our performance traintestsplit feature same above another folds crossvalscore best three plot single g whether participant c vector regression vs mne between u into using highlight pipeline makepipeline vectorizer standardscaler mean results optimized performing strategy classes precision recall classifies lda participants ml pleasantness label indicates
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
     <main class="jupyter-page">
-    
-<div class="jb_cell">
+    <div id="page-info"></div>
+    <div class="jb_cell">
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -82,9 +81,10 @@ EEG and EMG data sets for Novelty and Pleasantness' dataset. In this dataset the
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
-<span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span> <span class="o">=</span> <span class="n">warn</span>
 </pre></div>
 
     </div>
@@ -103,17 +103,17 @@ EEG and EMG data sets for Novelty and Pleasantness' dataset. In this dataset the
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load necessary libraries</span>
 <span class="kn">import</span> <span class="nn">mne</span>
-<span class="kn">from</span> <span class="nn">mne.decoding</span> <span class="k">import</span> <span class="n">Vectorizer</span>
+<span class="kn">from</span> <span class="nn">mne.decoding</span> <span class="kn">import</span> <span class="n">Vectorizer</span>
 
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">classification_report</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_recall_fscore_support</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_recall_fscore_support</span>
 
 <span class="c1"># Models</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">svm</span>
-<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="k">import</span> <span class="n">LinearDiscriminantAnalysis</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
 </pre></div>
 
     </div>
@@ -127,7 +127,7 @@ EEG and EMG data sets for Novelty and Pleasantness' dataset. In this dataset the
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>At the first step, we will simply load epoched EEG data, which here have been converted to an MNE format. To obtain more information about this format, please refer to the tutorial named 'study1'.</p>
+<p>At the first step, we will simply load epoched EEG data, which here have been converted to an MNE format. To obtain more information about this format, please refer to tutorial named <a href="DatasetConstruction.ipynb">Dataset Construction</a></p>
 
 </div>
 </div>
@@ -148,29 +148,6 @@ EEG and EMG data sets for Novelty and Pleasantness' dataset. In this dataset the
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Reading ../../study1/study1_eeg/epochdata/P-01.fif ...
-    Found the data of interest:
-        t =       0.00 ...    1496.09 ms
-        0 CTF compensation matrices available
-484 matching events found
-No baseline correction applied
-Not setting metadata
-0 projection items activated
-484
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -434,16 +411,6 @@ Accuracy of 5th fold is 0.673469387755102
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-  DeprecationWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;svc__C&#39;: 0.1, &#39;svc__kernel&#39;: &#39;linear&#39;}
 Best Score: 0.7011494252873564
@@ -582,16 +549,6 @@ Precision: 0.7332826747720365, Recall: 0.7183499288762447, f1-score:0.7149321266
 <div class="output_wrapper">
 <div class="output">
 
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-  DeprecationWarning)
-</pre>
-</div>
-</div>
-</div>
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
@@ -794,31 +751,21 @@ Precision: 0.7359307359307359, Recall: 0.732574679943101, f1-score:0.73214285714
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-  DeprecationWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;svc__C&#39;: 0.1, &#39;svc__kernel&#39;: &#39;linear&#39;}
-Best Score: 0.6703910614525139
+Best Score: 0.6927374301675978
 SVM Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.70      0.65      0.67        46
-    Pleasant       0.53      0.58      0.55        31
+  Unpleasant       0.68      0.70      0.69        46
+    Pleasant       0.53      0.52      0.52        31
 
     accuracy                           0.62        77
-   macro avg       0.61      0.62      0.61        77
-weighted avg       0.63      0.62      0.63        77
+   macro avg       0.61      0.61      0.61        77
+weighted avg       0.62      0.62      0.62        77
 
 Accuracy of SVM model: 0.6233766233766234
-Precision: 0.6135430916552668, Recall: 0.6164095371669005, f1-score:0.6140017286084702
+Precision: 0.6070921985815603, Recall: 0.605890603085554, f1-score:0.6063811034725894
 </pre>
 </div>
 </div>
@@ -871,19 +818,19 @@ Precision: 0.6135430916552668, Recall: 0.6164095371669005, f1-score:0.6140017286
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;logisticregression__penalty&#39;: &#39;l1&#39;}
-Best Score: 0.6983240223463687
+Best Score: 0.7039106145251397
 LR Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.70      0.76      0.73        46
-    Pleasant       0.59      0.52      0.55        31
+  Unpleasant       0.76      0.74      0.75        46
+    Pleasant       0.62      0.65      0.63        31
 
-    accuracy                           0.66        77
-   macro avg       0.65      0.64      0.64        77
-weighted avg       0.66      0.66      0.66        77
+    accuracy                           0.70        77
+   macro avg       0.69      0.69      0.69        77
+weighted avg       0.70      0.70      0.70        77
 
-Accuracy of LR model: 0.6623376623376623
-Precision: 0.6462962962962963, Recall: 0.6384992987377279, f1-score:0.6404454022988506
+Accuracy of LR model: 0.7012987012987013
+Precision: 0.6902777777777778, Recall: 0.6921458625525947, f1-score:0.6910866910866911
 </pre>
 </div>
 </div>
@@ -933,15 +880,15 @@ Precision: 0.6462962962962963, Recall: 0.6384992987377279, f1-score:0.6404454022
 <pre>LDA Clasification Report:
                precision    recall  f1-score   support
 
-  Unpleasant       0.71      0.70      0.70        46
-     Plesant       0.56      0.58      0.57        31
+  Unpleasant       0.68      0.65      0.67        46
+     Plesant       0.52      0.55      0.53        31
 
-    accuracy                           0.65        77
-   macro avg       0.64      0.64      0.64        77
-weighted avg       0.65      0.65      0.65        77
+    accuracy                           0.61        77
+   macro avg       0.60      0.60      0.60        77
+weighted avg       0.61      0.61      0.61        77
 
-Accuracy of LDA model: 0.6493506493506493
-Precision: 0.6368055555555556, Recall: 0.638148667601683, f1-score:0.6373626373626373
+Accuracy of LDA model: 0.6103896103896104
+Precision: 0.5984848484848484, Recall: 0.6002805049088359, f1-score:0.5989583333333333
 </pre>
 </div>
 </div>
@@ -1040,31 +987,21 @@ Precision: 0.6368055555555556, Recall: 0.638148667601683, f1-score:0.63736263736
 <div class="jb_output_wrapper }}">
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/model_selection/_search.py:814: DeprecationWarning: The default of the `iid` parameter will change from True to False in version 0.22 and will be removed in 0.24. This will change numeric results when test-set sizes are unequal.
-  DeprecationWarning)
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Best Parameters: {&#39;svc__C&#39;: 10, &#39;svc__kernel&#39;: &#39;sigmoid&#39;}
-Best Score: 0.6022099447513812
+<pre>Best Parameters: {&#39;svc__C&#39;: 0.1, &#39;svc__kernel&#39;: &#39;linear&#39;}
+Best Score: 0.574585635359116
 SVM Clasification Report:
                precision    recall  f1-score   support
 
-     Neutral       0.59      0.69      0.63        35
-    Pleasant       0.70      0.60      0.65        43
+     Neutral       0.75      0.63      0.68        43
+    Pleasant       0.62      0.74      0.68        35
 
-    accuracy                           0.64        78
-   macro avg       0.64      0.65      0.64        78
-weighted avg       0.65      0.64      0.64        78
+    accuracy                           0.68        78
+   macro avg       0.68      0.69      0.68        78
+weighted avg       0.69      0.68      0.68        78
 
-Accuracy of SVM model: 0.6410256410256411
-Precision: 0.6440342781806196, Recall: 0.6451827242524917, f1-score:0.6407894736842106
+Accuracy of SVM model: 0.6794871794871795
+Precision: 0.6845238095238095, Recall: 0.6853820598006645, f1-score:0.6794344895610718
 </pre>
 </div>
 </div>
@@ -1117,19 +1054,19 @@ Precision: 0.6440342781806196, Recall: 0.6451827242524917, f1-score:0.6407894736
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Best Parameters: {&#39;logisticregression__penalty&#39;: &#39;l1&#39;}
-Best Score: 0.6243093922651933
+Best Score: 0.6795580110497238
 LR Clasification Report:
                precision    recall  f1-score   support
 
-     Neutral       0.62      0.74      0.68        35
-    Pleasant       0.75      0.63      0.68        43
+     Neutral       0.80      0.77      0.79        43
+    Pleasant       0.73      0.77      0.75        35
 
-    accuracy                           0.68        78
-   macro avg       0.68      0.69      0.68        78
-weighted avg       0.69      0.68      0.68        78
+    accuracy                           0.77        78
+   macro avg       0.77      0.77      0.77        78
+weighted avg       0.77      0.77      0.77        78
 
-Accuracy of LR model: 0.6794871794871795
-Precision: 0.6845238095238095, Recall: 0.6853820598006645, f1-score:0.6794344895610718
+Accuracy of LR model: 0.7692307692307693
+Precision: 0.7673038892551087, Recall: 0.7694352159468438, f1-score:0.7678571428571429
 </pre>
 </div>
 </div>
@@ -1178,25 +1115,15 @@ Precision: 0.6845238095238095, Recall: 0.6853820598006645, f1-score:0.6794344895
 <pre>LDA Clasification Report:
                precision    recall  f1-score   support
 
-     Neutral       0.68      0.74      0.71        43
-     Plesant       0.65      0.57      0.61        35
+     Neutral       0.71      0.58      0.64        43
+     Plesant       0.58      0.71      0.64        35
 
-    accuracy                           0.67        78
-   macro avg       0.66      0.66      0.66        78
-weighted avg       0.66      0.67      0.66        78
+    accuracy                           0.64        78
+   macro avg       0.65      0.65      0.64        78
+weighted avg       0.65      0.64      0.64        78
 
-Accuracy of LDA model: 0.6666666666666666
-Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585858585
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/pinargoktepe/miniconda3/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
+Accuracy of LDA model: 0.6410256410256411
+Precision: 0.6478405315614618, Recall: 0.6478405315614618, f1-score:0.6410256410256411
 </pre>
 </div>
 </div>
@@ -1301,6 +1228,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UN&#39;</span><span class="p">,</span> <span class="s1">&#39;UP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">]</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SVM&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
 <span class="n">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">accuracies</span><span class="p">,</span> <span class="s1">&#39;Accuracy&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">accuracies</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1320,6 +1248,15 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 >
 </div>
 
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[0.72, 0.7066666666666667, 0.7333333333333333], [0.6233766233766234, 0.7012987012987013, 0.6103896103896104], [0.6794871794871795, 0.7692307692307693, 0.6410256410256411]]
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -1380,7 +1317,7 @@ Precision: 0.6630061770761839, Recall: 0.6578073089700996, f1-score:0.6585858585
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We train three different classifiers to classify EEG responses to three different conditions, at the single participant level. The test accuracy values obtained from the models are provided  in the first plot above. According to the results, LDA provided the best perfromance on the first task which is classification of unpleasant and neutral events. For classification of unpleasant and pleasant events, logistic regression is the best performing model by surpassing LDA slightly. For the third task that classifies neutraland pleasant events, accuracy values are very similar. Although till now it is mentioned that certain models performed better on certain tasks, anyone could not reach above 75%.</p>
+<p>We train three different classifiers to classify EEG responses to three different conditions, at the single participant level. The test accuracy values obtained from the models are provided  in the first plot above. According to the results, LDA provided the best perfromance on the first task which is classification of unpleasant and neutral events. For classification of unpleasant and pleasant events, logistic regression is the best performing model by surpassing other models with a noticable difference. For the third task that classifies neutral and pleasant events, accuracy values vary from model to model and logistic regrassion is by far the best perfoming model. Although till now it is mentioned that certain models performed better on certain tasks, anyone could not reach above 77%.</p>
 <p>Although accuracy is one of the most common evaluation metrics for machine learning models, it is not enough to conclude a model is performing than another. It may be deceptive in some cases. For example when a model classifies a majority of the instances to one class, accuracy can still be high if the classes are highly imbalanced. Another case would be when false postive and false negative have different consequences. Especially in the medical domain, this case is an important aspect while evaluating models. Therefore, precision, recall and f1-score, which is a metric combining precision and recall, should be considered besides accuracy.</p>
 <p>The plot of F1-scores (second plot) demonstrates results similar to the accuracy plot.</p>
 

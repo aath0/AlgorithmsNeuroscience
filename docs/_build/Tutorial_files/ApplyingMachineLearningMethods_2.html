@@ -3,25 +3,24 @@ redirect_from:
   - "/tutorial-files/applyingmachinelearningmethods-2"
 interact_link: content/Tutorial_files/ApplyingMachineLearningMethods_2.ipynb
 kernel_name: python3
+kernel_path: content/Tutorial_files
 has_widgets: false
 title: |-
   Group-Level Analysis
+pagenum: 12
 prev_page:
   url: /Tutorial_files/ApplyingMachineLearningMethods_1.html
-  title: |-
-    Single-Participant Analysis
 next_page:
   url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions.html
-  title: |-
-    Classication over time
 suffix: .ipynb
+search: between data classification events test models example unpleasant neutral part task tutorial performance machine learning group cross validation p lda logistic regression applying methods eeg level same dataset building classifiers pleasant mean scores statistical since value tasks applyingmachinelearningmethods ipynb participants previous participant used model function significant difference wilcoxon parametric derived analysis considering only built performances compared while create compare next caculate following plots observed applied tests paired non our assumptions needs not possible smaller conclude lr better steps exercise box given around both classifying provided performing named done emotion antecedent appraisal checks emg sets novelty pleasantness list separately statistically second
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
     <main class="jupyter-page">
-    
-<div class="jb_cell">
+    <div id="page-info"></div>
+    <div class="jb_cell">
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -35,7 +34,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial, same classification tasks in Tutorial-4 will be examined but this time analysis will be done on group level.</p>
+<p>In this tutorial, we are performing the same classification tasks in tutorial named <a href="ApplyingMachineLearningMethods_1.ipynb">Applying Machine Learning Methods-1</a>, but this time the analysis is done at the group level, considering EEG data from a group of participants.</p>
 
 </div>
 </div>
@@ -46,8 +45,24 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>The the previous tutorial data of the only one participant in 'Emotion-Antecedent Appraisal Checks: EEG and EMG data sets for Novelty and Pleasantness' is used. In this tutorial, all participans will be included</p>
+<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>In the previous tutorial <a href="ApplyingMachineLearningMethods_1.ipynb">Applying Machine Learning Methods-1</a>,   data of the only one participant in 'Emotion-Antecedent Appraisal Checks: EEG and EMG data sets for Novelty and Pleasantness' is used.</p>
+<ul>
+<li><p>In the first part of this tutorial, list of models will be built for each participant separately and then their performances will be compared statistically.</p>
+</li>
+<li><p>As of second part, data from all participans will be included while building classifiers.</p>
+</li>
+</ul>
 
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Part---1:">Part - 1:<a class="anchor-link" href="#Part---1:"> </a></h3>
 </div>
 </div>
 </div>
@@ -60,10 +75,10 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
-<span class="c1"># ignore all future warnings</span>
-<span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">pass</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span> <span class="o">=</span> <span class="n">warn</span>
 </pre></div>
 
     </div>
@@ -81,24 +96,119 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mne</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">listdir</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">statistics</span>
-<span class="kn">from</span> <span class="nn">mne.decoding</span> <span class="k">import</span> <span class="n">Vectorizer</span>
+<span class="kn">from</span> <span class="nn">mne.decoding</span> <span class="kn">import</span> <span class="n">Vectorizer</span>
 
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span><span class="p">,</span> <span class="n">cross_val_predict</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">precision_recall_fscore_support</span><span class="p">,</span> <span class="n">accuracy_score</span>
-<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">StratifiedKFold</span><span class="p">,</span> <span class="n">cross_val_predict</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">precision_recall_fscore_support</span><span class="p">,</span> <span class="n">accuracy_score</span>
 
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
 <span class="c1"># Models</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">svm</span>
-<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="k">import</span> <span class="n">LinearDiscriminantAnalysis</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Loading dataset</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;../../study1/study1_eeg/epochdata/&#39;</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_folder</span><span class="o">+</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="s1">&#39;.DS_Store&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+
+<span class="c1">#extract ids from file names</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+
+<span class="n">epochs</span> <span class="o">=</span> <span class="p">[</span><span class="n">mne</span><span class="o">.</span><span class="n">read_epochs</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+<span class="n">epochs_UN</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs</span><span class="p">]</span>
+<span class="n">epochs_UP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;FU&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs</span><span class="p">]</span>
+<span class="n">epochs_NP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;FN&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs</span><span class="p">]</span>
+<span class="c1"># Dataset with unpleasant and neutral events</span>
+<span class="n">data_UN</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_UN</span><span class="p">]</span>
+<span class="n">labels_UN</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">events</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_UN</span><span class="p">]</span>
+
+<span class="n">data_UP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_UP</span><span class="p">]</span>
+<span class="n">labels_UP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">events</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_UP</span><span class="p">]</span>
+
+<span class="n">data_NP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_NP</span><span class="p">]</span>
+<span class="n">labels_NP</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">events</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">epochs_NP</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events">Example #1:  Classification between Unpleasant and Pleasant Events<a class="anchor-link" href="#Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We create pipelines for all classifiers and run cross validation for all of them in order to compare their performance:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">kfold</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)):</span>
+            <span class="c1">#print(model_names[i])</span>
+            <span class="n">cv_accuracy</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">)</span>
+            <span class="c1">#print(&#39;CV accuracy of model &#39; + model_names[i] + &#39;: &#39; + str(cv_accuracy))</span>
+            
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Data has infinite or NaN value!&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results</span>
 </pre></div>
 
     </div>
@@ -115,7 +225,570 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load Dataset</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">results_perParticipant_UP</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> 
+<span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)):</span>
+    <span class="c1"># Linear Discriminant Analysis</span>
+    <span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+    <span class="c1">#Logistic Regression</span>
+    <span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+    
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">data_UP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">labels_UP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">kfold</span><span class="p">)</span>
+    <span class="n">results_perParticipant_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we caculate mean of cross validation scores for each model via following function:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculateAvgResults</span><span class="p">(</span><span class="n">model_names</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">):</span>
+    <span class="n">avg_results_perParticipant</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)):</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model_names</span><span class="p">)):</span>
+            <span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results_perParticipant</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]))</span>
+        <span class="n">avg_results_perParticipant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>  
+    
+    <span class="k">return</span> <span class="n">avg_results_perParticipant</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">avg_results_perParticipant_UP</span> <span class="o">=</span> <span class="n">calculateAvgResults</span><span class="p">(</span><span class="n">model_names</span><span class="p">,</span> <span class="n">results_perParticipant_UP</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following function plots mean cross validation scores of models for each partipant. As it can be observed that classifiers' performances vary depending on the participant.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="k">def</span> <span class="nf">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+
+    <span class="c1"># Fonts for the axis and title</span>
+    <span class="n">title_font</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fontname&#39;</span><span class="p">:</span><span class="s1">&#39;Arial&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="s1">&#39;24&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="s1">&#39;normal&#39;</span><span class="p">}</span> 
+    <span class="n">axis_font</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fontname&#39;</span><span class="p">:</span><span class="s1">&#39;Arial&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="s1">&#39;22&#39;</span><span class="p">}</span>
+    
+    <span class="n">width</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># the width of the bars</span>
+    <span class="c1">#participants = [&#39;P-&#39;+str(i) for i in unique_ids]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+    <span class="c1"># Set position of bar on X axis</span>
+    <span class="n">rects1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+    <span class="n">rects2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rects1</span><span class="p">]</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects1</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#87CEFA&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects2</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">))[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#FFE4E1&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([</span><span class="n">r</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">))],</span> <span class="n">ids</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Participant IDs&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">axis_font</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">axis_font</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;CV Accuracy Scores per Participant&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">title_font</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#sort ids results together to plot nicely.</span>
+<span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UP</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UP</span><span class="p">)))</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_18_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As the final step, a statistical test will be applied to compare models. In machine learning statistical tests can be employed to evaluate whether there is a significant difference between the performace of two classifiers. We choose Wilcoxon test which is a paired non-parametric test.</p>
+<p>Since the same data used for building and testing each classifier, a paired test like Wilcoxon is applicable in our case. Moreover, assumptions for the distributions that will be compared needs to be considered. Since we do not have any assumptions we narrow down our test options to non-parametric test. One can select a parametric test if it is possible to assume which distributon would be observed.</p>
+<p>After deciding the statistical test, a thershold for significance comparison needs to be determined. We consider as significantly different classification performance where statistical tests give a p-value of p &lt; 0.05:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="k">def</span> <span class="nf">applyStatisticalTest</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not enough values for statistical test!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+                <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">wilcoxon</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">results</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p = </span><span class="si">{0}</span><span class="s2"> for Wilcoxon test between </span><span class="si">{1}</span><span class="s2"> and </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyStatisticalTest</span><span class="p">(</span><span class="n">avg_results_perParticipant_UP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 4.072914334952533e-05 for Wilcoxon test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since the derived p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and pleasant events and Logistic Regression perfomed better in this task.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#2:--Classification-between-Unpleasant-and-Neutral-Events">Example #2:  Classification between Unpleasant and Neutral Events<a class="anchor-link" href="#Example-#2:--Classification-between-Unpleasant-and-Neutral-Events"> </a></h3><p>Same steps in the first example will be applied for the task of classification between unpleasant and neutral events in this example.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">results_perParticipant_UN</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> 
+<span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)):</span>
+    <span class="c1"># Linear Discriminant Analysis</span>
+    <span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+    <span class="c1">#Logistic Regression</span>
+    <span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+    
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">data_UN</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">labels_UN</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">kfold</span><span class="p">)</span>
+    <span class="n">results_perParticipant_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">avg_results_perParticipant_UN</span> <span class="o">=</span> <span class="n">calculateAvgResults</span><span class="p">(</span><span class="n">model_names</span><span class="p">,</span> <span class="n">results_perParticipant_UN</span><span class="p">)</span>
+<span class="c1">#sort ids results together to plot nicely.</span>
+<span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UN</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UN</span><span class="p">)))</span>  
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_26_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyStatisticalTest</span><span class="p">(</span><span class="n">avg_results_perParticipant_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 1.570510001975002e-05 for Wilcoxon test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to first example, since the derived p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of Logistic Regression on the task of classification between unpleasant and neutral events. So, we can conlcude that logistic regression performned better on this task as well.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-#3:-Classification-between-Pleasant-and-Neutral-Events">Example #3: Classification between Pleasant and Neutral Events<a class="anchor-link" href="#Example-#3:-Classification-between-Pleasant-and-Neutral-Events"> </a></h3><p>We will follow same steps in the previous examples classification between pleasant and neutral events task in this example.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">results_perParticipant_NP</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> 
+<span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)):</span>
+    <span class="c1"># Linear Discriminant Analysis</span>
+    <span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
+    <span class="c1">#Logistic Regression</span>
+    <span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+    
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">data_NP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">labels_NP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">kfold</span><span class="p">)</span>
+    <span class="n">results_perParticipant_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">avg_results_perParticipant_NP</span> <span class="o">=</span> <span class="n">calculateAvgResults</span><span class="p">(</span><span class="n">model_names</span><span class="p">,</span> <span class="n">results_perParticipant_NP</span><span class="p">)</span>
+<span class="c1">#sort ids results together to plot nicely.</span>
+<span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_NP</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">avg_results_perParticipant_NP</span><span class="p">)))</span>  
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">ids_sorted</span><span class="p">,</span> <span class="n">avg_results_perParticipant_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_32_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyStatisticalTest</span><span class="p">(</span><span class="n">avg_results_perParticipant_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 1.570510001975002e-05 for Wilcoxon test between LR and LDA
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Exercise:">Exercise:<a class="anchor-link" href="#Exercise:"> </a></h4><p>Interpret the p-value derived from Wilcoxon test.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Part---2:">Part - 2:<a class="anchor-link" href="#Part---2:"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this part, all data will be used for building a model.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load and prepare dataset</span>
 <span class="n">data_folder</span> <span class="o">=</span> <span class="s1">&#39;../../study1/study1_eeg/epochdata/&#39;</span>
 <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_folder</span><span class="o">+</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="s1">&#39;.DS_Store&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
@@ -154,45 +827,9 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="jb_cell">
 
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_UN: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_UP</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape of epochs_NP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs_all_NP</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Shape of epochs_UN: (25, 2)
-Shape of epochs_UP: (25, 2)
-Shape of epochs_NP: (25, 2)
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Separating data, labels and the ids of the participants for modelling</p>
+<p>We define a function that separates data, labels and the IDs of each dataset:</p>
 
 </div>
 </div>
@@ -233,7 +870,7 @@ Shape of epochs_NP: (25, 2)
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events">Example #1:  Classification between Unpleasant and Pleasant Events<a class="anchor-link" href="#Example-#1:--Classification-between-Unpleasant-and-Pleasant-Events"> </a></h3>
+<h5 id="Example:-Classification-between-Unpleasant-and-Neutral-Events&#182;">Example: Classification between Unpleasant and Neutral Events&#182;<a class="anchor-link" href="#Example:-Classification-between-Unpleasant-and-Neutral-Events&#182;"> </a></h5>
 </div>
 </div>
 </div>
@@ -246,7 +883,7 @@ Shape of epochs_NP: (25, 2)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">ids_UP</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_UP</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">ids_UN</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -260,7 +897,7 @@ Shape of epochs_NP: (25, 2)
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Standard score calculation is done by simply calculating accuracy regardless of the participant. The following function calculates and returns accuracy per participant.</p>
+<p>We create LDA and logistic regression models as we did in part one. However this time, we will have only two models in total.</p>
 
 </div>
 </div>
@@ -274,60 +911,14 @@ Shape of epochs_NP: (25, 2)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ids: &#39;</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;predictions: &#39;</span><span class="p">)</span>
-    <span class="n">pprint</span><span class="p">(</span> <span class="n">predictions</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;labels: &#39;</span><span class="p">)</span>
-    <span class="n">pprint</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-    <span class="n">unique_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unique: &#39;</span><span class="p">,</span> <span class="n">unique_ids</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">unique_ids</span><span class="p">:</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">id</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;len indices: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">predictions</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]]:</span>
-                <span class="n">res</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;res: &#39;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
-    
-    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">unique_ids</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Create all models and then run cross validation for all of them for comparing their performances.</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Linear Discriminant Analysis</span>
 <span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
 <span class="c1">#Logistic Regression</span>
 <span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
 
-<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">clf_lda_pip</span><span class="p">]</span> <span class="c1">#clf_lr_pip</span>
-<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span> <span class="c1">#&#39;LR&#39;, </span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
+<span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -344,24 +935,7 @@ Shape of epochs_NP: (25, 2)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">kfold</span><span class="p">):</span>
-    <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-    
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">predictions</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
-            <span class="n">cv_accuracy_perparticipant</span><span class="p">,</span> <span class="n">unique_ids</span> <span class="o">=</span> <span class="n">calculate_score_groupLevel</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-            <span class="n">results_perParticipant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy_perparticipant</span><span class="p">)</span>
-            <span class="n">unique_ids_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">)</span>
-            <span class="n">cv_accuracy</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kfold</span><span class="p">)</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV accuracy of model &#39;</span> <span class="o">+</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_accuracy</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV accuracy of model &#39;</span> <span class="o">+</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; per participant: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_accuracy_perparticipant</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Data has infinite or NaN value!&#39;</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -373,46 +947,12 @@ Shape of epochs_NP: (25, 2)
 
 <div class="jb_cell">
 
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we caculate mean and standard deviation of cross validation scores for each model:</p>
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">results</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">unique_ids_all</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UP</span><span class="p">,</span> <span class="n">data_UP</span><span class="p">,</span> <span class="n">labels_UP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>LDA
-</pre>
-</div>
-</div>
-</div>
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-/anaconda3/envs/pinar/lib/python3.7/site-packages/sklearn/discriminant_analysis.py:388: UserWarning: Variables are collinear.
-  warnings.warn(&#34;Variables are collinear.&#34;)
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -424,43 +964,16 @@ Shape of epochs_NP: (25, 2)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mean_CVaccuracies</span><span class="p">,</span> <span class="n">std_CVaccuracies</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Claculate mean and standard deviation of cross validation scores for each model</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
-<span class="n">mean_CVaccuracies_UP</span><span class="p">,</span> <span class="n">std_CVaccuracies_UP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+<span class="n">mean_CVaccuracies_UN</span><span class="p">,</span> <span class="n">std_CVaccuracies_UN</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
-    <span class="n">mean_CVaccuracies_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-    <span class="n">std_CVaccuracies_UP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_CVaccuracies_UP</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Std cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_CVaccuracies_UP</span><span class="p">))</span>
+    <span class="n">mean_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">std_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_CVaccuracies_UN</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Std cv accuracies UP: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_CVaccuracies_UN</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_UP</span><span class="p">)</span>
-<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_UP</span><span class="p">)</span>
+<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_UN</span><span class="p">)</span>
+<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_UN</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean cv accuracies: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Std cv accuracies: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">))</span>
 </pre></div>
@@ -476,13 +989,13 @@ Shape of epochs_NP: (25, 2)
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Results UP: [array([0.38266017, 0.34912892, 0.37377964]), array([0.32625348, 0.31358885, 0.28870293])]
-Mean cv accuracies UP: [0.36852290812317, 0.3095150869795531]
-Std cv accuracies UP: [0.017372709567566594, 0.01910386526397282]
+<pre>Results UP: [array([0.50332284, 0.4926522 , 0.53918824]), array([0.50052466, 0.50174948, 0.52274318])]
+Mean cv accuracies UP: [0.5117210960065134, 0.5083391037253356]
+Std cv accuracies UP: [0.024378243617145648, 0.012489317029433022]
 
 
-Mean cv accuracies: [[0.36852290812317, 0.3095150869795531]]
-Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
+Mean cv accuracies: [[0.5117210960065134, 0.5083391037253356]]
+Std cv accuracies: [[0.024378243617145648, 0.012489317029433022]]
 </pre>
 </div>
 </div>
@@ -497,97 +1010,7 @@ Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>!!!! Not sure if the following plot makes sense!!!</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following function plots lda and logistic regression scores for each partipant</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="k">def</span> <span class="nf">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
-    
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;CV Accuracy Scores per Participant&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;LR&#39;</span><span class="p">:</span>
-            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;ro&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;bo&#39;</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Participant IDs&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotCVScores_perParticipant</span><span class="p">(</span><span class="n">unique_ids_all</span><span class="p">,</span> <span class="n">results_perParticipant</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_23_0.png"
->
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Box plots shows how given data is distributed around the mean of the data and also it highlights the outliers.</p>
+<p>Box plots shows how a given dataset is distributed around the mean of the data and also they highlight outliers:</p>
 
 </div>
 </div>
@@ -612,23 +1035,8 @@ Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
     <span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">model_names</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
+    
+<span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -644,7 +1052,7 @@ Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
 
 
 <div class="output_png output_subarea ">
-<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_26_0.png"
+<img src="../images/Tutorial_files/ApplyingMachineLearningMethods_2_48_0.png"
 >
 </div>
 
@@ -660,74 +1068,8 @@ Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Independent t-test is applied to statistically show whether there is a significant difference between performace of two models. Small p-value means that performace of models are significantly different, large p-value indicates that models are performing similar. In general, as the threshold for determining whether two distributions are different or not, p = 0.05 which corresponds to 95% confidence level is preffered.</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">applyTTest</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not enough values for t-test!&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
-                <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">results</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p = </span><span class="si">{0}</span><span class="s2"> for t-test between </span><span class="si">{1}</span><span class="s2"> and </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>  <span class="n">model_names</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>p = 0.016704736667900663 for t-test between LR and LDA
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Since p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and pleasant events.</p>
+<p>As part of group level analysis of eeg data, LR and LDA are created as in the previous tutorial, <a href="ApplyingMachineLearningMethods_1.ipynb">Applying Machine Learning Methods-1</a>, but this time SVM is omitted because it requires hours to compute given the large amount of data we have at group level.</p>
+<p>The box plot above showed the distibution of cross validation scores for both LDA and Logistic Regression on task of classifying unpleasant and neutral events. While classifying between Unpleasant and Neutral events, both models provided accuracy around 50%. This leads us to the conclusion that considering all participants together does not provided good results. The possible reason might be the variance between participants.</p>
 
 </div>
 </div>
@@ -738,386 +1080,7 @@ Std cv accuracies: [[0.017372709567566594, 0.01910386526397282]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Example-#2:--Classification-between-Unpleasant-and-Neutral-Events">Example #2:  Classification between Unpleasant and Neutral Events<a class="anchor-link" href="#Example-#2:--Classification-between-Unpleasant-and-Neutral-Events"> </a></h3>
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Dataset with unpleasant and neutral events</span>
-<span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">ids_UN</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_UN</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
-<span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
-<span class="c1">#Logistic Regression</span>
-<span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
-<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
-<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">results_UN</span><span class="p">,</span> <span class="n">results_perParticipant_UN</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_UN</span><span class="p">,</span> <span class="n">data_UN</span><span class="p">,</span> <span class="n">labels_UN</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span>    
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="jb_output_wrapper }}">
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>LR
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">results_UN</span><span class="p">)</span>
-<span class="n">mean_CVaccuracies_UN</span><span class="p">,</span> <span class="n">std_CVaccuracies_UN</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results_UN</span><span class="p">)):</span>
-    <span class="n">mean_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results_UN</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-    <span class="n">std_CVaccuracies_UN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results_UN</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-
-<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_UN</span><span class="p">)</span>
-<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_UN</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results_UN</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Since p-value is smaller than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between unpleasant and neutral events.</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Example-#3:-Classification-between-Pleasant-and-Neutral-Events">Example #3: Classification between Pleasant and Neutral Events<a class="anchor-link" href="#Example-#3:-Classification-between-Pleasant-and-Neutral-Events"> </a></h3>
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Dataset with unpleasant and neutral events</span>
-<span class="n">data_NP</span><span class="p">,</span> <span class="n">labels_NP</span><span class="p">,</span> <span class="n">ids_NP</span> <span class="o">=</span> <span class="n">getData_labels</span><span class="p">(</span><span class="n">epochs_all_NP</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Linear Discriminant Analysis</span>
-<span class="n">clf_lda_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;svd&#39;</span><span class="p">))</span>
-<span class="c1">#Logistic Regression</span>
-<span class="n">clf_lr_pip</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">Vectorizer</span><span class="p">(),</span> <span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
-<span class="n">models</span> <span class="o">=</span> <span class="p">[</span> <span class="n">clf_lr_pip</span><span class="p">,</span> <span class="n">clf_lda_pip</span><span class="p">]</span>
-<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDA&#39;</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">results_NP</span><span class="p">,</span> <span class="n">results_perParticipant_NP</span> <span class="o">=</span> <span class="n">applyCrossValidation</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">,</span> <span class="n">ids_NP</span><span class="p">,</span> <span class="n">data_NP</span><span class="p">,</span> <span class="n">labels_NP</span><span class="p">,</span> <span class="n">kfold</span><span class="p">)</span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">results_NP</span><span class="p">)</span>
-<span class="n">mean_CVaccuracies_NP</span><span class="p">,</span> <span class="n">std_CVaccuracies_NP</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results_NP</span><span class="p">)):</span>
-    <span class="n">mean_CVaccuracies_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results_NP</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-    <span class="n">std_CVaccuracies_NP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">results_NP</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-
-<span class="n">mean_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_CVaccuracies_NP</span><span class="p">)</span>
-<span class="n">std_CVaccuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_CVaccuracies_NP</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mean_CVaccuracies</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">std_CVaccuracies</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotModelComparison</span><span class="p">(</span><span class="n">results_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">applyTTest</span><span class="p">(</span><span class="n">results_NP</span><span class="p">,</span> <span class="n">model_names</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Since p-value is larger than 0.05, we can conclude that there is a significant difference between performance of LDA and performance of LR on the task of classification between neutral and pleasant events.</p>
-
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Comparing-Performance-of-Models-Over-Different-Tasks">Comparing Performance of Models Over Different Tasks<a class="anchor-link" href="#Comparing-Performance-of-Models-Over-Different-Tasks"> </a></h4>
-</div>
-</div>
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">evalMetric</span><span class="p">,</span> <span class="n">metricName</span><span class="p">):</span>
-    <span class="n">width</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># the width of the bars</span>
-
-    <span class="c1"># Set position of bar on X axis</span>
-    <span class="n">rects1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evalMetric</span><span class="p">))</span>
-    <span class="n">rects2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rects1</span><span class="p">]</span>
-    <span class="n">rects3</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rects2</span><span class="p">]</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects1</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">evalMetric</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#87CEFA&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">rects2</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">evalMetric</span><span class="p">))[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#FFE4E1&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Classification Tasks&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([</span><span class="n">r</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evalMetric</span><span class="p">))],</span> <span class="n">tasks</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">metricName</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Plot Mean Accuracies</span>
-<span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UN&#39;</span><span class="p">,</span> <span class="s1">&#39;UP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">]</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LDA&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">]</span>
-<span class="n">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mean_CVaccuracies</span><span class="p">,</span> <span class="s1">&#39;Mean CV Accuracy&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Plot Std of Accuracies</span>
-<span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UN&#39;</span><span class="p">,</span> <span class="s1">&#39;UP&#39;</span><span class="p">,</span> <span class="s1">&#39;NP&#39;</span><span class="p">]</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LDA&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">]</span>
-<span class="n">plotEvalMetrics</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">std_CVaccuracies</span><span class="p">,</span> <span class="s1">&#39;Std of CV Accuracies &#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="jb_cell">
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As part of group level analysis of eeg data, logistic regression (lr) and linear discriminant analysis (lda) are created as in the previous tutorial but this time svm is omitted because it requires hours to build with the amount of data we have.</p>
-<p>The first plot above showed the mean cross validation for both LDA and Logistic Regression on each task. While classifying between Unpleasant and Neutral events, both model provided accuracy around 50% which is the highest score among all tasks. For other two classification tasks, Lda performed better. It can be concluded that classification between Unpleasant and Pleasant events is the most difficult task for the models since both of them provided poor performance.</p>
+<h5 id="Exercise:">Exercise:<a class="anchor-link" href="#Exercise:"> </a></h5><p>Try building models for other tasks. How do models that are built with all data perform on those tasks?</p>
 
 </div>
 </div>
