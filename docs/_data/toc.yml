@@ -22,10 +22,21 @@
 # See the links below for an example.
 
 
-- title: About Us
-  url: /Tutorial_files/About
+- title: Preprocessing
+  url: /Tutorial_files/preprocess
   not_numbered: false
-
-- divider: true
-
+  expand_sections: true
+  sections:
+  - title: Data Loading
+    url: /Tutorial_files/DataLoading
+    not_numbered: true
+  - title: Data Visualization
+    url:  /Tutorial_files/DataVisualization
+    not_numbered: true
+  - title: Baseline Correction
+    url: /Tutorial_files/BaselineCorrection
+    not_numbered: true
+  - title: Choosing a Reference
+    url: /Tutorial_files/ReferencingforEEGdata
+    not_numbered: true
 
