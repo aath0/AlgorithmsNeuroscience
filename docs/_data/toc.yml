@@ -22,7 +22,78 @@
 # See the links below for an example.
 
 
+# Top-level page
+- title: Background
+  url: /Tutorial_files/Introduction
+  not_numbered: false
+
+# Divider for meta-pages and content page
+- divider: true
+
+- title: Introduction to Signal Processing
+  url: /Tutorial_files/introToSP
+  not_numbered: false
+  expand_sections: true
+  sections:
+  - title: Temporal Vs. Spectral Space
+    url:  /Tutorial_files/Temporal_vs_Spectral
+    not_numbered: true
+  - title: Acquiring Data
+    url: /Tutorial_files/AcquiringData
+    not_numbered: true
+
+- divider: true
+
+- title: Preprocessing
+  url: /Tutorial_files/preprocess
+  not_numbered: false
+  expand_sections: true
+  sections:
+  - title: Data Loading
+    url: /Tutorial_files/DataLoading
+    not_numbered: true
+  - title: Data Visualization
+    url:  /Tutorial_files/DataVisualization
+    not_numbered: true
+  - title: Baseline Correction
+    url: /Tutorial_files/BaselineCorrection
+    not_numbered: true
+  - title: Choosing a Reference
+    url: /Tutorial_files/ReferencingforEEGdata
+    not_numbered: true
+
+- divider: true
+
+- title: Machine Learning 
+  url: /Tutorial_files/ml
+  not_numbered: false
+  expand_sections: true
+  sections:
+  - title: Formatting a dataset
+    url: /Tutorial_files/DatasetConstruction
+    not_numbered: true
+  - title: Single-Participant Analysis
+    url: /Tutorial_files/ApplyingMachineLearningMethods_1
+    not_numbered: true
+  - title: Group-Level Analysis
+    url: /Tutorial_files/ApplyingMachineLearningMethods_2
+    not_numbered: true
+  - title: Classication over time
+    url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions
+    not_numbered: true
+
+- divider: true
+
+- title: About Us
+  url: /Tutorial_files/About
+  not_numbered: false
+
+- divider: true
+
 - title: Outline
   url: /Tutorial_files/Outline
   not_numbered: false
+
+  
+
 
