@@ -3,25 +3,25 @@ redirect_from:
   - "/tutorial-files/referencingforeegdata"
 interact_link: content/Tutorial_files/ReferencingforEEGdata.ipynb
 kernel_name: python3
+kernel_path: content/Tutorial_files
 has_widgets: false
 title: |-
   Choosing a Reference
+pagenum: 8
 prev_page:
   url: /Tutorial_files/BaselineCorrection.html
-  title: |-
-    Baseline Correction
 next_page:
   url: /Tutorial_files/ml.html
-  title: |-
-    Machine Learning
 suffix: .ipynb
+search: reference channel referencing potential data re new eeg electrical channels original differences after changes therefore average between x approaches not existing function object plots tutorial effects selection changed called note selecting several commonly does averaged select where used above seteegreference epochs parameter name uses want change tp significantly values events choice analysis topography recordings collected measuring voltage part brain point collecting process amplitude signal differ too very critical formulazied follows corresponds id athough optimal strategy applied compute potentials virtual well subtracting completed another approach activity lowest such ears apart statistical perfom best doi org j jneumeth named provided mne package
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
     <main class="jupyter-page">
-    
-<div class="jb_cell">
+    <div id="page-info"><div id="page-title">Choosing a Reference</div>
+</div>
+    <div class="jb_cell">
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -47,7 +47,7 @@ Another approach would be to select the channels where electrical activity is th
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">simplefilter</span>
 <span class="c1"># ignore all future warnings</span>
 <span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 </pre></div>
@@ -343,7 +343,7 @@ Another approach would be to select the channels where electrical activity is th
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="n">references</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="s1">&#39;TP8&#39;</span><span class="p">]</span>

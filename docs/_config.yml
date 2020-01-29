@@ -16,9 +16,9 @@
 
 #######################################################################################
 # Jekyll site settings
-title: Tutorials for EEG Analysis
-author: Athina Tzovara, Elpiniki (Surname), Pinar Goktepe, Samuel Gerster
-email: athina.tz@gmail.com, pinargoktepe@gmail.com
+title: YOUR BOOK NAME
+author: YOUR AUTHOR NAME
+email: YOUR EMAIL
 description: >-
   This is an example book built with Jupyter Books.
 
@@ -36,6 +36,7 @@ footer_text: This page was created by <a href="https://github.com/jupyter/jupyte
 # Sidebar settings
 show_sidebar: true                # Show the sidebar. Only set to false if your only wish to host a single page.
 collapse_inactive_chapters: true  # Whether to collapse the inactive chapters in the sidebar
+collapse_inactive_sections: true  # Whether to collapse the sub-sections within a non-active section in the sidebar
 textbook_logo: images/logo/logo.png               # A logo to be displayed at the top of your textbook sidebar. Should be square
 textbook_logo_link: https://jupyterbook.org/                    # A link for the logo.
 sidebar_footer_text: Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
@@ -44,11 +45,19 @@ number_toc_chapters: true         # Whether to add numbers to chapterse in your 
 # Search settings
 search_max_words_in_content: 100   # In the search function, use at most this many words (too many words will make search slow)
 
+# Controlling page information
+page_titles: infer                      # Either `None`, `infer`, or `toc`
+page_authors: None                     # Either `None` or `infer`
+filename_title_split_character: _     # If inferring titles based on filename, splt on this character.
+
+# Math settings
+number_equations: false                 # Whether to automatically number all block equations with MathJax
+
 #######################################################################################
 # Interact link settings
 
 # General interact settings
-use_jupyterlab: true                     # If 'true', interact links will use JupyterLab as the interface
+use_jupyterlab: false                     # If 'true', interact links will use JupyterLab as the interface
 
 # Jupyterhub link settings
 use_jupyterhub_button: false              # If 'true', display a button that will direct users to a JupyterHub (that you provide)
@@ -149,6 +158,4 @@ plugins:
 - jekyll-scholar
 
 # Jupyter Book version - DO NOT CHANGE THIS. It is generated when a new book is created
-jupyter_book_version: 0.6.3
-
-theme: jekyll-theme-cayman
+jupyter_book_version: 0.6.4

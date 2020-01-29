@@ -3,25 +3,25 @@ redirect_from:
   - "/tutorial-files/baselinecorrection"
 interact_link: content/Tutorial_files/BaselineCorrection.ipynb
 kernel_name: python3
+kernel_path: content/Tutorial_files
 has_widgets: false
 title: |-
   Baseline Correction
+pagenum: 7
 prev_page:
   url: /Tutorial_files/DataVisualization.html
-  title: |-
-    Data Visualization
 next_page:
   url: /Tutorial_files/ReferencingforEEGdata.html
-  title: |-
-    Choosing a Reference
 suffix: .ipynb
+search: baseline correction interval epoch object values before mne signal our stimulus average function epochs plots manual data drifts external correct after mean apply should applybaseline none applied modified example plot calculation tutorial eeg temporal various change effect using activity period e event occurs post approaches subtracting calculated given not corrected note initial without any python copies original however deep selected ms above amplitudes decreased single trials below library easily yellow green orange value region select subtract applying check both same method resolving often unrelated experimental question internal sources cause also across electrodes reduce such custom perform called essentially consists exist
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
     <main class="jupyter-page">
-    
-<div class="jb_cell">
+    <div id="page-info"><div id="page-title">Baseline Correction</div>
+</div>
+    <div class="jb_cell">
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -73,7 +73,7 @@ Various approaches exist for baseline correction. The traditional way is subtrac
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For elimiating warnings</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">simplefilter</span>
 <span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 </pre></div>
 
@@ -373,7 +373,7 @@ Various approaches exist for baseline correction. The traditional way is subtrac
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="k">def</span> <span class="nf">plotChannel</span><span class="p">(</span><span class="n">ch_index</span><span class="p">,</span> <span class="n">with_baselineCorrection</span><span class="p">,</span> <span class="n">without_baselineCorrection</span><span class="p">):</span>
