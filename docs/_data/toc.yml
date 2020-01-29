@@ -35,6 +35,9 @@
   not_numbered: false
   expand_sections: true
   sections:
+  - title: Complex Numbers
+    url:  /Tutorial_files/ComplexNumbers_temp
+    not_numbered: true   
   - title: Temporal Vs. Spectral Space
     url:  /Tutorial_files/Temporal_vs_Spectral
     not_numbered: true
