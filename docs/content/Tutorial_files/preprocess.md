@@ -1,1 +1,0 @@
-This chapter is about preprocessing of data.
