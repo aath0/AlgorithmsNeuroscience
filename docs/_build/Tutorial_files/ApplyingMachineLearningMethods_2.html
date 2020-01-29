@@ -13,7 +13,7 @@ prev_page:
 next_page:
   url: /Tutorial_files/ApplyingMachineLearningMethodstoTemporalDimensions.html
 suffix: .ipynb
-search: between data classification events test models example unpleasant neutral part task tutorial performance machine learning group cross validation p lda logistic regression applying methods eeg level same dataset building classifiers pleasant mean scores statistical since value tasks applyingmachinelearningmethods participants previous participant used model function significant difference wilcoxon parametric derived analysis considering ipynb only built performances compared while create compare next caculate following plots observed applied tests paired non our assumptions needs not possible smaller conclude lr better steps exercise box given around both classifying provided performing named aath github io algorithmsneuroscience tutorialfiles html done emotion antecedent appraisal checks emg sets
+search: between data classification events test models example unpleasant neutral part task tutorial performance group analysis cross validation p lda logistic regression eeg level same participant dataset building classifiers pleasant mean scores statistical since value tasks single aath github io algorithmsneuroscience tutorialfiles applyingmachinelearningmethods html participants previous used model function significant difference wilcoxon parametric derived machine learning considering paricipant only built performances compared while create compare next caculate following plots observed applied tests paired non our assumptions needs not possible smaller conclude lr better steps exercise box given around both classifying provided applying methods performing named done emotion antecedent appraisal checks emg
 
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
@@ -35,7 +35,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this tutorial, we are performing the same classification tasks in tutorial named <a href="https://aath0.github.io/AlgorithmsNeuroscience/Tutorial_files/ApplyingMachineLearningMethods_1.html">Applying Machine Learning Methods-1</a>, but this time the analysis is done at the group level, considering EEG data from a group of participants.</p>
+<p>In this tutorial, we are performing the same classification tasks in tutorial named <a href="https://aath0.github.io/AlgorithmsNeuroscience/Tutorial_files/ApplyingMachineLearningMethods_1.html">Single-Participant Analysis</a>, but this time the analysis is done at the group level, considering EEG data from a group of participants.</p>
 
 </div>
 </div>
@@ -46,7 +46,7 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>In the previous tutorial <a href="ApplyingMachineLearningMethods_1.ipynb">Applying Machine Learning Methods-1</a>,   data of the only one participant in 'Emotion-Antecedent Appraisal Checks: EEG and EMG data sets for Novelty and Pleasantness' is used.</p>
+<h5 id="Dataset:">Dataset:<a class="anchor-link" href="#Dataset:"> </a></h5><p>In the previous tutorial <a href="https://aath0.github.io/AlgorithmsNeuroscience/Tutorial_files/ApplyingMachineLearningMethods_1.html">Single-Paricipant Analysis</a>, data of the only one participant in 'Emotion-Antecedent Appraisal Checks: EEG and EMG data sets for Novelty and Pleasantness' is used.</p>
 <ul>
 <li><p>In the first part of this tutorial, list of models will be built for each participant separately and then their performances will be compared statistically.</p>
 </li>
@@ -1069,7 +1069,7 @@ Std cv accuracies: [[0.024378243617145648, 0.012489317029433022]]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As part of group level analysis of eeg data, LR and LDA are created as in the previous tutorial, <a href="ApplyingMachineLearningMethods_1.ipynb">Applying Machine Learning Methods-1</a>, but this time SVM is omitted because it requires hours to compute given the large amount of data we have at group level.</p>
+<p>As part of group level analysis of eeg data, LR and LDA are created as in the previous tutorial, <a href="https://aath0.github.io/AlgorithmsNeuroscience/Tutorial_files/ApplyingMachineLearningMethods_1.html">Single-Paricipant Analysis</a>, but this time SVM is omitted because it requires hours to compute given the large amount of data we have at group level.</p>
 <p>The box plot above showed the distibution of cross validation scores for both LDA and Logistic Regression on task of classifying unpleasant and neutral events. While classifying between Unpleasant and Neutral events, both models provided accuracy around 50%. This leads us to the conclusion that considering all participants together does not provided good results. The possible reason might be the variance between participants.</p>
 
 </div>
