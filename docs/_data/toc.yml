@@ -22,6 +22,6 @@
 # See the links below for an example.
 
 # Top-level page
-- title: Hello
-  url: /Tutorial_files/Hello
-  not_numbered: true
+- title: Background
+  url: /Tutorial_files/Introduction
+  not_numbered: false
