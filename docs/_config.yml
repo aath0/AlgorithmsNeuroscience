@@ -65,7 +65,7 @@ jupyterhub_url: ''                     # The URL for your JupyterHub. If no URL,
 jupyterhub_interact_text: Interact             # The text that interact buttons will contain.
 
 # Binder link settings
-use_binder_button: false                 # If 'true', add a binder button for interactive links
+use_binder_button: true                 # If 'true', add a binder button for interactive links
 binderhub_url: https://mybinder.org/v2/gh/aath0/AlgorithmsNeuroscience/693ae43b6557e87e4d627b1a405910342b2c3406                        # The URL for your BinderHub. If no URL, use ""
 binder_repo_base: https://github.com/aath0/AlgorithmsNeuroscience                     # The site on which the textbook repository is hosted
 binder_repo_org: YOUR-ORG                     # The username or organization that owns this repository
