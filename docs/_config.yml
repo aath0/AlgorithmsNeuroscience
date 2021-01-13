@@ -26,10 +26,6 @@ baseurl: /  # the subpath of your site, e.g. /blog. If there is no subpath for y
 url: YOUR URL                  # the base hostname & protocol for your site, e.g. http://example.com
 logo: 'content/images/logo.png'
 
-repository:
-  url: https://github.com/aath0/AlgorithmsNeuroscience
-html:
-  use_repository_button: true
 
 #######################################################################################
 # Jupyter Book settings
